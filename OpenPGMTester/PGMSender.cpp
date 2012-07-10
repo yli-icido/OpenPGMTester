@@ -114,8 +114,6 @@ int PGMSender::connect()
 
 int PGMSender::send()
 {
-    __int64 timestamp;
-
     int retval = PGM_FAILURE;
     string userInput;
     for (;;)
@@ -148,8 +146,6 @@ int PGMSender::send()
                 cerr << "Error opening file" << filenames[i] << endl;
                 continue;
             }
-            timestamp = GetTickCount64();
-
             while ( !feof (pFile) )
             {
                 if ( fgets (buffer , sizeof(buffer), pFile) == NULL )
