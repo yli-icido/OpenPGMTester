@@ -11,6 +11,7 @@
 #include <locale.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <map>
 #include <vector>

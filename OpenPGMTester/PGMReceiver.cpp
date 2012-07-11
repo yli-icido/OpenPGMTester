@@ -3,6 +3,9 @@
 #include "PGMUtils.h"
 
 #include "PGMReceiver.h"
+#pragma message (__FILE__ ": warning 4996 has been disableed" )
+#pragma warning ( disable: 4996 )
+
 using namespace std;
 
 WSAEVENT PGMReceiver::sTerminateEvent = INVALID_HANDLE_VALUE;
@@ -91,16 +94,12 @@ int PGMReceiver::connect()
     }
 
     pgm_error_t* pgm_err = NULL;
-    char userInputc[256];
+//     char userInputc[256];
     do
     {
         // read input
         usage();
-        do 
-        {
-            gets( userInputc );
-        } while ( strcmp( userInputc, "go" ) != 0 );
-        
+//         gets( userInputc );
 //         retval = analyseOptions( userInput );
 //         if ( ( retval == PGM_INVALID_PARAMS ) || ( retval == PGM_FAILURE ) )
 //         {
@@ -112,10 +111,6 @@ int PGMReceiver::connect()
 
         sTerminateEvent = WSACreateEvent();
         SetConsoleCtrlHandler( ( PHANDLER_ROUTINE ) on_console_ctrl, TRUE );
-
-        char buffer[4096];
-        FILE* pOutputFile = fopen("output", "w");
-        setvbuf( pOutputFile, buffer, _IOFBF, sizeof( buffer ) );
 
         retval = onStartup();
         if ( retval != PGM_SUCCESS )
@@ -137,6 +132,9 @@ int PGMReceiver::connect()
         WSAEventSelect (recv_sock, waitEvents[1], FD_READ);
         pgm_getsockopt (mSock, IPPROTO_PGM, PGM_PENDING_SOCK, &pending_sock, &socklen);
         WSAEventSelect (pending_sock, waitEvents[2], FD_READ);
+        FILE* pFileToWrite = NULL;
+        int rCounter = 0;
+        char cCounter[3];
 
         do {
             struct timeval tv;
@@ -157,6 +155,25 @@ int PGMReceiver::connect()
             {
             case PGM_IO_STATUS_NORMAL:
                 onData (buffer, len, &from);
+                if ( strcmp( buffer, "start" ) == 0 )
+                {
+                    if ( pFileToWrite != NULL )
+                    {
+                        fclose( pFileToWrite );
+                        pFileToWrite = NULL;
+                    }
+                    _itoa( rCounter, cCounter, 10 );
+                    pFileToWrite = fopen( strcat( "received", cCounter ), "w" );
+                }
+                else if ( strcmp( buffer, "end" ) == 0 )
+                {
+                    fclose( pFileToWrite );
+                    pFileToWrite = NULL;
+                }
+                else
+                {
+                    fwrite( buffer, 1, len, pFileToWrite );
+                }
                 break;
             case PGM_IO_STATUS_TIMER_PENDING:
                 {
@@ -483,7 +500,9 @@ err_abort:
 int PGMReceiver::onData( const void* restrict data, const size_t len, const struct pgm_sockaddr_t* restrict from )
 {
     /* protect against non-null terminated strings */
-    char buf[1024], tsi[PGM_TSISTRLEN];
+    fprintf(stderr, "data received, size: %d\n", len);
+
+    char buf[4096], tsi[PGM_TSISTRLEN];
     const size_t buflen = MIN(sizeof(buf) - 1, len);
 #ifndef CONFIG_HAVE_SECURITY_ENHANCED_CRT
     strncpy (buf, (const char*)data, buflen);

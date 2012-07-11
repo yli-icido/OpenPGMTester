@@ -3,6 +3,8 @@
 #include "PGMUtils.h"
 
 #include "PGMSender.h"
+#pragma message (__FILE__ ": warning 4996 has been disableed" )
+#pragma warning ( disable: 4996 )
 
 using namespace std;
 
@@ -116,15 +118,18 @@ int PGMSender::send()
 {
     int retval = PGM_FAILURE;
     string userInput;
+    int sCounter = 0;
     for (;;)
     {
         // expect a file name
         cout << "please input the full file name to send" << endl;
         cout << "for more than one files, separate the file names with \";\"" << endl;
         cout << "   -q to quit" << endl;
+        int status = PGM_IO_STATUS_NORMAL;
         getline( cin, userInput );
         if ( userInput == "-q" )
         {
+            status = pgm_send (mSock, "-q", 3, NULL);
             retval = PGM_SUCCESS;
             break;
         }
@@ -134,37 +139,59 @@ int PGMSender::send()
         if ( retval != PGM_SUCCESS )
             break;
 
-        FILE* pFile = NULL;
-        char buffer [4096];
-        int status = PGM_IO_STATUS_NORMAL;
-        FILE* pOutputFile = fopen("output", "w");
+        FILE* pFileToSend = NULL;
+        const int bufferSize = 4096;
+        char buffer[ bufferSize ];
+        char cCounter[3];
+        _itoa( sCounter, cCounter, 10 );
+        FILE* pFileToWrite = fopen( strcat( "sent", cCounter ), "w" );
+
+        // send a "start" indicate a transfer session started
+        status = pgm_send( mSock, "start", strlen( "start" ) + 1, NULL );
+
         for ( size_t i = 0; i < filenames.size(); i++ )
         {
-            pFile = fopen( filenames[i].c_str(), "r" );
-            if (pFile == NULL) 
+            pFileToSend = fopen( filenames[i].c_str(), "r" );
+            if (pFileToSend == NULL) 
             {
                 cerr << "Error opening file" << filenames[i] << endl;
                 continue;
             }
-            while ( !feof (pFile) )
+            fseek( pFileToSend, 0, SEEK_END );
+            size_t fileSize = ftell( pFileToSend );
+            size_t curPos = 0;
+            size_t sizeToRead = bufferSize;
+            rewind( pFileToSend );
+            size_t readResult = 0;
+            while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
-                if ( fgets (buffer , sizeof(buffer), pFile) == NULL )
+                if ( fileSize - curPos < bufferSize )
                 {
-                    cerr << "error reading file at: " << ftell(pFile) << endl;
-                    break;
+                    sizeToRead = fileSize - curPos;
                 }
 
-                fputs( buffer, pOutputFile );
-                status = pgm_send (mSock, buffer, sizeof(buffer) + 1, NULL);
+                readResult = fread( buffer, 1, sizeToRead, pFileToSend );
+                if ( readResult != sizeToRead )
+                {
+                    cerr << "error reading file at: " << ftell(pFileToSend) << endl;
+                    break;
+                }
+                curPos += readResult;
+
+                fwrite( buffer, 1, readResult, pFileToWrite );
+                status = pgm_send (mSock, buffer, readResult + 1, NULL);
                 if (PGM_IO_STATUS_NORMAL != status) 
                 {
                     fprintf (stderr, "pgm_send() failed.\n");
                 }
             }
-            fclose (pFile);
-            pFile = NULL;
+            fclose( pFileToSend );
+            pFileToSend = NULL;
         }
-        fclose( pOutputFile );
+        // send a "end" to indicate transfer session end
+        status = pgm_send (mSock, "end", strlen( "end" ) + 1, NULL);
+        sCounter++;
+        fclose( pFileToWrite );
     }
 
     return retval;
