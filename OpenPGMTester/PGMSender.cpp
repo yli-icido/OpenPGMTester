@@ -147,6 +147,7 @@ int PGMSender::send()
         char fileToWrite[10];
         strcpy( fileToWrite, "sent" );
         FILE* pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
+        sCounter++;
 
         // send a "start" indicate a transfer session started
         status = pgm_send( mSock, "start", strlen( "start" ) + 1, NULL );
@@ -192,7 +193,6 @@ int PGMSender::send()
         }
         // send a "end" to indicate transfer session end
         status = pgm_send (mSock, "end", strlen( "end" ) + 1, NULL);
-        sCounter++;
         fclose( pFileToWrite );
     }
 

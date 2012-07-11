@@ -166,6 +166,7 @@ int PGMReceiver::connect()
                     strcpy( fileToWrite, "received" );
                     _itoa( rCounter, cCounter, 10 );
                     pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
+                    rCounter++;
                 }
                 else if ( strcmp( buffer, "end" ) == 0 )
                 {
