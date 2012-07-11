@@ -129,7 +129,7 @@ int PGMSender::send()
         getline( cin, userInput );
         if ( userInput == "-q" )
         {
-            status = pgm_send (mSock, "-q", 3, NULL);
+            status = pgm_send (mSock, "-q", strlen( "-q" ) + 1, NULL);
             retval = PGM_SUCCESS;
             break;
         }
@@ -181,7 +181,7 @@ int PGMSender::send()
                 curPos += readResult;
 
                 fwrite( buffer, 1, readResult, pFileToWrite );
-                status = pgm_send (mSock, buffer, readResult + 1, NULL);
+                status = pgm_send (mSock, buffer, readResult, NULL);
                 if (PGM_IO_STATUS_NORMAL != status) 
                 {
                     fprintf (stderr, "pgm_send() failed.\n");

@@ -172,9 +172,13 @@ int PGMReceiver::connect()
                     fclose( pFileToWrite );
                     pFileToWrite = NULL;
                 }
-                else
+                else if ( pFileToWrite != NULL )
                 {
                     fwrite( buffer, 1, len, pFileToWrite );
+                }
+                else
+                {
+                    fprintf(stderr, "output file not open\n");
                 }
                 break;
             case PGM_IO_STATUS_TIMER_PENDING:
