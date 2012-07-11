@@ -144,7 +144,9 @@ int PGMSender::send()
         char buffer[ bufferSize ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
-        FILE* pFileToWrite = fopen( strcat( "sent", cCounter ), "w" );
+        char fileToWrite[10];
+        strcpy( fileToWrite, "sent" );
+        FILE* pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
 
         // send a "start" indicate a transfer session started
         status = pgm_send( mSock, "start", strlen( "start" ) + 1, NULL );

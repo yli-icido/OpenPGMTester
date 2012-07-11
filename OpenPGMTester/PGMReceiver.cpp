@@ -133,6 +133,7 @@ int PGMReceiver::connect()
         pgm_getsockopt (mSock, IPPROTO_PGM, PGM_PENDING_SOCK, &pending_sock, &socklen);
         WSAEventSelect (pending_sock, waitEvents[2], FD_READ);
         FILE* pFileToWrite = NULL;
+        char fileToWrite[11];
         int rCounter = 0;
         char cCounter[3];
 
@@ -162,8 +163,9 @@ int PGMReceiver::connect()
                         fclose( pFileToWrite );
                         pFileToWrite = NULL;
                     }
+                    strcpy( fileToWrite, "received" );
                     _itoa( rCounter, cCounter, 10 );
-                    pFileToWrite = fopen( strcat( "received", cCounter ), "w" );
+                    pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
                 }
                 else if ( strcmp( buffer, "end" ) == 0 )
                 {
