@@ -157,7 +157,7 @@ int PGMSender::send()
             pFileToSend = fopen( filenames[i].c_str(), "r" );
             if (pFileToSend == NULL) 
             {
-                cerr << "Error opening file" << filenames[i] << endl;
+				cerr << "Error opening file: " << filenames[i] << endl;
                 continue;
             }
             fseek( pFileToSend, 0, SEEK_END );
@@ -177,7 +177,9 @@ int PGMSender::send()
                 if ( readResult != sizeToRead )
                 {
                     cerr << "error reading file at: " << ftell(pFileToSend) << endl;
-                    break;
+					int err = ferror( pFileToSend );
+					if ( err != 0 )
+						cerr << "error code: " << err << endl;
                 }
                 curPos += readResult;
 
