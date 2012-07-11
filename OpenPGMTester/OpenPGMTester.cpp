@@ -6,6 +6,9 @@
 #include "PGMReceiver.h"
 #include "PGMSender.h"
 
+#pragma message (__FILE__ ": warning 4996 has been disableed" )
+#pragma warning ( disable: 4996 )
+
 using namespace std;
 
 int _tmain( int argc, _TCHAR* argv[] )
