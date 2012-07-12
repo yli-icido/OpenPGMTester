@@ -140,8 +140,7 @@ int PGMSender::send()
             break;
 
         FILE* pFileToSend = NULL;
-        const int bufferSize = PACKAGE_SIZE;
-        char buffer[ bufferSize ];
+        char* buffer = new char[ PACKAGE_SIZE ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
         char fileToWrite[10];
@@ -163,12 +162,12 @@ int PGMSender::send()
             fseek( pFileToSend, 0, SEEK_END );
             size_t fileSize = ftell( pFileToSend );
             size_t curPos = 0;
-            size_t sizeToRead = bufferSize;
+            size_t sizeToRead = PACKAGE_SIZE;
             rewind( pFileToSend );
             size_t readResult = 0;
             while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
-                if ( fileSize - curPos < bufferSize )
+                if ( fileSize - curPos < PACKAGE_SIZE )
                 {
                     sizeToRead = fileSize - curPos;
                 }
