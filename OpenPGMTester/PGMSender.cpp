@@ -177,6 +177,7 @@ int PGMSender::send()
                 if ( readResult != sizeToRead )
                 {
                     cerr << "error reading file at: " << ftell(pFileToSend) << endl;
+                    cerr << "sizeToRead:" << sizeToRead << ", actual read:" << readResult << endl;
                     cerr << "error code: " << ferror( pFileToSend ) << ", eof:" << feof( pFileToSend) << endl;
                 }
                 curPos += readResult;
