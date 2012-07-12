@@ -154,7 +154,7 @@ int PGMSender::send()
 
         for ( size_t i = 0; i < filenames.size(); i++ )
         {
-            pFileToSend = fopen( filenames[i].c_str(), "r" );
+            pFileToSend = fopen( filenames[i].c_str(), "rb" );
             if (pFileToSend == NULL) 
             {
 				cerr << "Error opening file: " << filenames[i] << endl;
