@@ -158,6 +158,7 @@ int PGMReceiver::connect()
                 onData (buffer, len, &from);
                 if ( strcmp( buffer, "start" ) == 0 )
                 {
+					printf ("start\n");
                     if ( pFileToWrite != NULL )
                     {
                         fclose( pFileToWrite );
@@ -170,6 +171,7 @@ int PGMReceiver::connect()
                 }
                 else if ( strcmp( buffer, "end" ) == 0 )
                 {
+					printf("end\n");
                     fclose( pFileToWrite );
                     pFileToWrite = NULL;
                 }
@@ -509,17 +511,17 @@ int PGMReceiver::onData( const void* restrict data, const size_t len, const stru
     /* protect against non-null terminated strings */
     fprintf(stderr, "data received, size: %d\n", len);
 
-    char buf[4096], tsi[PGM_TSISTRLEN];
-    const size_t buflen = MIN(sizeof(buf) - 1, len);
-#ifndef CONFIG_HAVE_SECURITY_ENHANCED_CRT
-    strncpy (buf, (const char*)data, buflen);
-    buf[buflen] = '\0';
-#else
-    strncpy_s (buf, buflen, (const char*)data, _TRUNCATE);
-#endif
+    char tsi[PGM_TSISTRLEN];
+//     const size_t buflen = MIN(sizeof(buf) - 1, len);
+// #ifndef CONFIG_HAVE_SECURITY_ENHANCED_CRT
+//     strncpy (buf, (const char*)data, buflen);
+//     buf[buflen] = '\0';
+// #else
+//     strncpy_s (buf, buflen, (const char*)data, _TRUNCATE);
+// #endif
     pgm_tsi_print_r (&from->sa_addr, tsi, sizeof(tsi));
     /* Microsoft CRT will crash on %zu */
-    printf ("\"%s\" (%lu bytes from %s)\n", buf, (unsigned long)len, tsi);
+    printf ("%lu bytes from %s\n", (unsigned long)len, tsi);
     return PGM_SUCCESS;
 }
 
