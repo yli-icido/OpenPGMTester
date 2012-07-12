@@ -152,6 +152,7 @@ int PGMReceiver::connect()
                 &from,
                 &fromlen,
                 &pgm_err);
+			printf("status: %d\n", status);
             switch (status) 
             {
             case PGM_IO_STATUS_NORMAL:
@@ -509,7 +510,7 @@ err_abort:
 int PGMReceiver::onData( const void* restrict data, const size_t len, const struct pgm_sockaddr_t* restrict from )
 {
     /* protect against non-null terminated strings */
-    fprintf(stderr, "data received, size: %d\n", len);
+//     fprintf(stderr, "data received, size: %d\n", len);
 
     char tsi[PGM_TSISTRLEN];
 //     const size_t buflen = MIN(sizeof(buf) - 1, len);
@@ -521,7 +522,9 @@ int PGMReceiver::onData( const void* restrict data, const size_t len, const stru
 // #endif
     pgm_tsi_print_r (&from->sa_addr, tsi, sizeof(tsi));
     /* Microsoft CRT will crash on %zu */
-    printf ("%lu bytes from %s\n", (unsigned long)len, tsi);
+	SYSTEMTIME sysTime;
+	GetSystemTime( &sysTime );
+	printf ("%lu bytes from %s, %2d:%2d:%2d:%d\n", (unsigned long)len, tsi, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds);
     return PGM_SUCCESS;
 }
 
