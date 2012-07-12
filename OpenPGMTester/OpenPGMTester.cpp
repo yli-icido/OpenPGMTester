@@ -20,7 +20,7 @@ int _tmain( int argc, _TCHAR* argv[] )
     {
         fprintf (stderr, "type \"send\" to send packages\n");
         fprintf (stderr, "type \"receive\" to receive packages\n");
-        fprintf (stderr, "type \"q\" to quit\n");
+        fprintf (stderr, "type \"exit\" to exit\n");
         gets( userInputc );
 
         if ( strcmp( userInputc, "send" ) == 0 ) // send
@@ -63,14 +63,13 @@ int _tmain( int argc, _TCHAR* argv[] )
 
             } while ( false );
         }
-        else if ( strcmp( userInputc, "q" ) == 0 )
+        else if ( strcmp( userInputc, "exit" ) == 0 )
         {
-            fprintf(stderr, "quitting ...\n");
             retval = EXIT_SUCCESS;
             break;
         }
 
-    } while ( strcmp( userInputc, "q" ) != 0 );
+    } while ( strcmp( userInputc, "exit" ) != 0 );
 
     return retval;
 }
