@@ -140,7 +140,7 @@ int PGMSender::send()
             break;
 
         FILE* pFileToSend = NULL;
-        const int bufferSize = 4096;
+        const int bufferSize = PACKAGE_SIZE;
         char buffer[ bufferSize ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
@@ -188,6 +188,7 @@ int PGMSender::send()
                 {
                     fprintf (stderr, "pgm_send() failed.\n");
                 }
+//                 Sleep( 500 );
             }
             fclose( pFileToSend );
             pFileToSend = NULL;

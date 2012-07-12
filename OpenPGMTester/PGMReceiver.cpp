@@ -140,7 +140,7 @@ int PGMReceiver::connect()
         do {
             struct timeval tv;
             DWORD dwTimeout, dwEvents;
-            char buffer[4096];
+            char buffer[PACKAGE_SIZE];
             size_t len;
             struct pgm_sockaddr_t from;
             socklen_t fromlen = sizeof (from);
