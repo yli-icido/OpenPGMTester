@@ -22,7 +22,14 @@ mRsN( 0 ),
 mUseMulticastLoop( FALSE ),
 mSock( NULL ),
 mMaxTpDu( 1500 ),
-mSqns( 100 )
+mSqns( 100000 /*100*/ ), 
+m_no_router_assist( 0 ),
+m_send_only( 1 ),
+m_ambient_spm( pgm_secs (30) ),
+m_blocking( 0 ),
+m_multicast_hops( 16 ),
+m_dscp( 0x2e << 2 ),		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxODataRTE( 60*1000*1000 )
 {
 }
 
@@ -45,7 +52,14 @@ int PGMSender::initVar()
     mUseMulticastLoop = FALSE;
     mSock = NULL;
     mMaxTpDu = 1500;
-    mSqns = 100;
+    mSqns = 100000; /*100;*/
+    m_no_router_assist = 0;
+    m_send_only = 1;
+    m_ambient_spm = pgm_secs (30);
+    m_blocking = 0;
+    m_multicast_hops = 16;
+    m_dscp = 0x2e << 2;
+    mMaxODataRTE = 60*1000*1000;
     return PGM_SUCCESS;
 }
 
@@ -140,7 +154,7 @@ int PGMSender::send()
             break;
 
         FILE* pFileToSend = NULL;
-        char* buffer = new char[ PACKAGE_SIZE ];
+        char* buffer = new char[ PGM_BUFFER_SIZE ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
         char fileToWrite[10];
@@ -162,12 +176,12 @@ int PGMSender::send()
             fseek( pFileToSend, 0, SEEK_END );
             size_t fileSize = ftell( pFileToSend );
             size_t curPos = 0;
-            size_t sizeToRead = PACKAGE_SIZE;
+            size_t sizeToRead = PGM_BUFFER_SIZE;
             rewind( pFileToSend );
             size_t readResult = 0;
             while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
-                if ( fileSize - curPos < PACKAGE_SIZE )
+                if ( fileSize - curPos < PGM_BUFFER_SIZE )
                 {
                     sizeToRead = fileSize - curPos;
                 }
@@ -232,15 +246,12 @@ int PGMSender::createSocket()
     }
 
     /* Use RFC 2113 tagging for PGM Router Assist */
-    const int no_router_assist = 0;
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_IP_ROUTER_ALERT, &no_router_assist, sizeof(no_router_assist));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_IP_ROUTER_ALERT, &m_no_router_assist, sizeof(m_no_router_assist));
 
     pgm_drop_superuser();
 
     /* set PGM parameters */
-    const int send_only = 1,
-        ambient_spm = pgm_secs (30),
-        heartbeat_spm[] = { pgm_msecs (100),
+    const int m_heartbeat_spm[] = { pgm_msecs (100),
         pgm_msecs (100),
         pgm_msecs (100),
         pgm_msecs (100),
@@ -249,13 +260,13 @@ int PGMSender::createSocket()
         pgm_secs  (16),
         pgm_secs  (25),
         pgm_secs  (30) };
-
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_SEND_ONLY, &send_only, sizeof(send_only));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_SEND_ONLY, &m_send_only, sizeof(m_send_only));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MTU, &mMaxTpDu, sizeof(mMaxTpDu));
+    pgm_setsockopt( mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &mMaxODataRTE, sizeof( mMaxODataRTE ) );
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TXW_SQNS, &mSqns, sizeof(mSqns));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TXW_MAX_RTE, &mMaxRte, sizeof(mMaxRte));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_AMBIENT_SPM, &ambient_spm, sizeof(ambient_spm));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_HEARTBEAT_SPM, &heartbeat_spm, sizeof(heartbeat_spm));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_AMBIENT_SPM, &m_ambient_spm, sizeof(m_ambient_spm));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_HEARTBEAT_SPM, &m_heartbeat_spm, sizeof(m_heartbeat_spm));
     if (mUseFec) {
         struct pgm_fecinfo_t fecinfo; 
         fecinfo.block_size		= mRsN;
@@ -304,16 +315,13 @@ int PGMSender::createSocket()
     pgm_freeaddrinfo (res);
 
     /* set IP parameters */
-    const int blocking = 0,
-        multicast_loop = mUseMulticastLoop ? 1 : 0,
-        multicast_hops = 16,
-        dscp = 0x2e << 2;		/* Expedited Forwarding PHB for network elements, no ECN. */
+    const int multicast_loop = mUseMulticastLoop ? 1 : 0;
 
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_LOOP, &multicast_loop, sizeof(multicast_loop));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_HOPS, &multicast_hops, sizeof(multicast_hops));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_HOPS, &m_multicast_hops, sizeof(m_multicast_hops));
     if (AF_INET6 != sa_family)
-        pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &dscp, sizeof(dscp));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &blocking, sizeof(blocking));
+        pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &m_dscp, sizeof(m_dscp));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &m_blocking, sizeof(m_blocking));
 
     if (!pgm_connect (mSock, &pgm_err)) {
         fprintf (stderr, "Connecting PGM socket: %s\n", pgm_err->message);
