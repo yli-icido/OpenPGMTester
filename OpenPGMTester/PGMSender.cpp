@@ -13,23 +13,23 @@ PGMSender::PGMSender():
 mInitDone( false ),
 mIsToQuit( false ),
 mNetwork( PGM_MULTICAST_ADDRESS ),
-mPort( 0 ),
-mUdpEncapPort( 0 ),
-mMaxRte( 0 ),
+mPort( DEFAULT_DATA_DESTINATION_PORT ),
+mUdpEncapPort( USE_UDP_ENCAP_PORT ),
+mMaxRte( MAX_RTE ),
 mUseFec( FALSE ),
-mRsK( 0 ),
-mRsN( 0 ),
-mUseMulticastLoop( FALSE ),
+mRsK( RS_K ),
+mRsN( RS_N ),
+mUseMulticastLoop( USE_MULTICAST_LOOP ),
 mSock( NULL ),
-mMaxTpDu( 1500 ),
-mSqns( 100000 /*100*/ ), 
-m_no_router_assist( 0 ),
-m_send_only( 1 ),
-m_ambient_spm( pgm_secs (30) ),
-m_blocking( 0 ),
-m_multicast_hops( 16 ),
-m_dscp( 0x2e << 2 ),		/* Expedited Forwarding PHB for network elements, no ECN. */
-mMaxODataRTE( 60*1000*1000 )    // 60Mb
+mMaxTpDu( MAX_TPDU ),
+mSqns( SQNS ), 
+m_no_router_assist( NO_ROUTER_ASSIST ),
+m_send_only( SEND_ONLY ),
+m_ambient_spm( AMBIENT_SPM ),
+m_nonblocking( SENDER_NON_BLOCKING ),
+m_multicast_hops( MULTICAST_HOPS ),
+m_dscp( DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxODataRTE( MAX_ODATA_RTE )
 {
 }
 
@@ -43,23 +43,23 @@ int PGMSender::initVar()
     mInitDone = false;
     mIsToQuit = false;
     mNetwork = PGM_MULTICAST_ADDRESS;
-    mPort = 0;
-    mUdpEncapPort = 0;
-    mMaxRte = 0;
+    mPort = DEFAULT_DATA_DESTINATION_PORT;
+    mUdpEncapPort = USE_UDP_ENCAP_PORT;
+    mMaxRte = MAX_RTE;
     mUseFec = FALSE;
-    mRsK = 0;
-    mRsN = 0;
-    mUseMulticastLoop = FALSE;
+    mRsK = RS_K;
+    mRsN = RS_N;
+    mUseMulticastLoop = USE_MULTICAST_LOOP;
     mSock = NULL;
-    mMaxTpDu = 1500;
-    mSqns = 100000; /*100;*/
-    m_no_router_assist = 0;
-    m_send_only = 1;
-    m_ambient_spm = pgm_secs (30);
-    m_blocking = 0;
-    m_multicast_hops = 16;
-    m_dscp = 0x2e << 2;
-    mMaxODataRTE = 60*1000*1000;
+    mMaxTpDu = MAX_TPDU;
+    mSqns = SQNS;
+    m_no_router_assist = NO_ROUTER_ASSIST;
+    m_send_only = SEND_ONLY;
+    m_ambient_spm = AMBIENT_SPM;
+    m_nonblocking = SENDER_NON_BLOCKING;
+    m_multicast_hops = MULTICAST_HOPS;
+    m_dscp = DSCP;
+    mMaxODataRTE = MAX_ODATA_RTE;
     return PGM_SUCCESS;
 }
 
@@ -321,7 +321,7 @@ int PGMSender::createSocket()
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_HOPS, &m_multicast_hops, sizeof(m_multicast_hops));
     if (AF_INET6 != sa_family)
         pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &m_dscp, sizeof(m_dscp));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &m_blocking, sizeof(m_blocking));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &m_nonblocking, sizeof(m_nonblocking));
 
     if (!pgm_connect (mSock, &pgm_err)) {
         fprintf (stderr, "Connecting PGM socket: %s\n", pgm_err->message);

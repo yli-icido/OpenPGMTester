@@ -15,30 +15,30 @@ PGMReceiver::PGMReceiver() :
 mInitDone( false ),
 mIsToQuit( false ),
 mNetwork( PGM_MULTICAST_ADDRESS ),
-mPort( 0 ),
-mUdpEncapPort( 0 ),
+mPort( DEFAULT_DATA_DESTINATION_PORT ),
+mUdpEncapPort( USE_UDP_ENCAP_PORT ),
 mUsePgmcc( FALSE ),
 mUseFec( FALSE ),
-mRsK( 0 ),
-mRsN( 0 ),
-mUseMulticastLoop( FALSE ),
+mRsK( RS_K ),
+mRsN( RS_N ),
+mUseMulticastLoop( USE_MULTICAST_LOOP ),
 mSock( NULL ), 
-mMaxTpDu( 1500 ),
-mSqns( 100 ),
-m_no_router_assist( 0 ),
-m_recv_only( 1 ),
-m_passive( 0 ),
-m_peer_expiry( pgm_secs (300) ),
-m_spmr_expiry( pgm_msecs (250) ),
-m_nak_bo_ivl( pgm_msecs (50) ),
-m_nak_rpt_ivl( pgm_secs (2) ),
-m_nak_rdata_ivl( pgm_secs (2) ),
-m_nak_data_retries( 50 ),
-m_nak_ncf_retries( 50 ),
-m_odata_max_rate( 60 * 1000 * 1000 ),
-m_nonblocking( 1 ),
-m_multicast_hops( 16 ),
-m_dscp( 0x2e << 2 )		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxTpDu( MAX_TPDU ),
+mSqns( SQNS ),
+m_no_router_assist( NO_ROUTER_ASSIST ),
+m_recv_only( RECEIVE_ONLY ),
+m_passive( PASSIVE ),
+m_peer_expiry( PEER_EXPIRY_SECS ),
+m_spmr_expiry( SPMR_EXPIRY_MSECS ),
+m_nak_bo_ivl( NAK_BO_IVL_MSECS ),
+m_nak_rpt_ivl( NAK_RPT_IVL_SECS ),
+m_nak_rdata_ivl( NAK_RDATA_IVL_SECS ),
+m_nak_data_retries( NAK_DATA_RETRIES ),
+m_nak_ncf_retries( NAK_NCF_RETRIES ),
+m_odata_max_rate( MAX_ODATA_RTE ),
+m_nonblocking( RECEIVER_NON_BLOCKING ),
+m_multicast_hops( MULTICAST_HOPS ),
+m_dscp( DSCP )		/* Expedited Forwarding PHB for network elements, no ECN. */
 {
     memset( mWaitEvents, -1, sizeof(mWaitEvents) );
 }
@@ -53,32 +53,32 @@ int PGMReceiver::initVar()
     mInitDone = false;
     mIsToQuit = false;
     mNetwork = PGM_MULTICAST_ADDRESS;
-    mPort = 0;
-    mUdpEncapPort = 0;
+    mPort = DEFAULT_DATA_DESTINATION_PORT;
+    mUdpEncapPort = USE_UDP_ENCAP_PORT;
     mUsePgmcc = FALSE;
     mUseFec = FALSE;
-    mRsK = 0;
-    mRsN = 0;
-    mUseMulticastLoop = false;
+    mRsK = RS_K;
+    mRsN = RS_N;
+    mUseMulticastLoop = USE_MULTICAST_LOOP;
     sTerminateEvent = INVALID_HANDLE_VALUE;
     sIsTerminated = FALSE;
     mSock = NULL;
-    mMaxTpDu = 1500;
-    mSqns = 100;
-    m_no_router_assist = 0;
-    m_recv_only = 1;
-    m_passive = 0;
-    m_peer_expiry = pgm_secs (300);
-    m_spmr_expiry = pgm_msecs (250);
-    m_nak_bo_ivl = pgm_msecs (50);
-    m_nak_rpt_ivl = pgm_secs (2);
-    m_nak_rdata_ivl = pgm_secs (2);
-    m_nak_data_retries = 50;
-    m_nak_ncf_retries = 50;
-    m_odata_max_rate = 60 * 1000 * 1000;
-    m_nonblocking = 1;
-    m_multicast_hops = 16;
-    m_dscp = 0x2e << 2;		/* Expedited Forwarding PHB for network elements, no ECN. */
+    mMaxTpDu = MAX_TPDU;
+    mSqns = SQNS;
+    m_no_router_assist = NO_ROUTER_ASSIST;
+    m_recv_only = RECEIVE_ONLY;
+    m_passive = PASSIVE;
+    m_peer_expiry = PEER_EXPIRY_SECS;
+    m_spmr_expiry = SPMR_EXPIRY_MSECS;
+    m_nak_bo_ivl = NAK_BO_IVL_MSECS;
+    m_nak_rpt_ivl = NAK_RPT_IVL_SECS;
+    m_nak_rdata_ivl = NAK_RDATA_IVL_SECS;
+    m_nak_data_retries = NAK_DATA_RETRIES;
+    m_nak_ncf_retries = NAK_NCF_RETRIES;
+    m_odata_max_rate = MAX_ODATA_RTE;
+    m_nonblocking = RECEIVER_NON_BLOCKING;
+    m_multicast_hops = MULTICAST_HOPS;
+    m_dscp = DSCP;		/* Expedited Forwarding PHB for network elements, no ECN. */
 
     return PGM_SUCCESS;
 }

@@ -38,7 +38,7 @@ private:
     int             m_no_router_assist;
     int             m_send_only;
     int             m_ambient_spm;
-    int             m_blocking;
+    int             m_nonblocking;
     int             m_multicast_hops;
     int             m_dscp;
     size_t          mMaxODataRTE;
