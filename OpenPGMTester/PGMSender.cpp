@@ -263,7 +263,7 @@ int PGMSender::createSocket()
         pgm_secs  (30) };
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_SEND_ONLY, &m_send_only, sizeof(m_send_only));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MTU, &mMaxTpDu, sizeof(mMaxTpDu));
-//     pgm_setsockopt( mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &mMaxODataRTE, sizeof( mMaxODataRTE ) );
+    pgm_setsockopt( mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &mMaxODataRTE, sizeof( mMaxODataRTE ) );
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TXW_SQNS, &mSqns, sizeof(mSqns));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TXW_MAX_RTE, &mMaxRte, sizeof(mMaxRte));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_AMBIENT_SPM, &m_ambient_spm, sizeof(m_ambient_spm));
