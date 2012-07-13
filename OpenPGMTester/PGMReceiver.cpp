@@ -439,7 +439,7 @@ int PGMReceiver::onStartup()
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RDATA_IVL, &m_nak_rdata_ivl, sizeof(m_nak_rdata_ivl));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_DATA_RETRIES, &m_nak_data_retries, sizeof(m_nak_data_retries));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_NCF_RETRIES, &m_nak_ncf_retries, sizeof(m_nak_ncf_retries));
-	pgm_setsockopt (mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &m_odata_max_rate, sizeof(m_odata_max_rate));
+// 	pgm_setsockopt (mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &m_odata_max_rate, sizeof(m_odata_max_rate));
 
 #ifdef I_UNDERSTAND_PGMCC_AND_FEC_ARE_NOT_SUPPORTED
     if (use_pgmcc) {
