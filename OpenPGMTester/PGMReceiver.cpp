@@ -181,7 +181,6 @@ int PGMReceiver::connect()
                 &from,
                 &fromlen,
                 &pgm_err);
-			printf("status: %d\n", status);
             switch (status) 
             {
             case PGM_IO_STATUS_NORMAL:
@@ -238,6 +237,7 @@ int PGMReceiver::connect()
                 }
 
             default:
+				printf("status: %d\n", status);
                 if (pgm_err) {
                     fprintf (stderr, "%s\n", pgm_err->message);
                     pgm_error_free (pgm_err);
