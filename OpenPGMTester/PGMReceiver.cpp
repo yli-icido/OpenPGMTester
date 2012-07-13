@@ -398,7 +398,8 @@ int PGMReceiver::onStartup()
         nak_rpt_ivl = pgm_secs (2),
         nak_rdata_ivl = pgm_secs (2),
         nak_data_retries = 50,
-        nak_ncf_retries = 50;
+        nak_ncf_retries = 50,
+		odata_max_rate = 60 * 1000 * 1000;
 
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_RECV_ONLY, &recv_only, sizeof(recv_only));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_PASSIVE, &passive, sizeof(passive));
@@ -411,6 +412,7 @@ int PGMReceiver::onStartup()
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RDATA_IVL, &nak_rdata_ivl, sizeof(nak_rdata_ivl));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_DATA_RETRIES, &nak_data_retries, sizeof(nak_data_retries));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_NCF_RETRIES, &nak_ncf_retries, sizeof(nak_ncf_retries));
+	pgm_setsockopt (mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &odata_max_rate, sizeof(odata_max_rate));
 
 #ifdef I_UNDERSTAND_PGMCC_AND_FEC_ARE_NOT_SUPPORTED
     if (use_pgmcc) {
