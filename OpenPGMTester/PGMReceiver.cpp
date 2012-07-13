@@ -24,7 +24,21 @@ mRsN( 0 ),
 mUseMulticastLoop( FALSE ),
 mSock( NULL ), 
 mMaxTpDu( 1500 ),
-mSqns( 100 )
+mSqns( 100 ),
+m_no_router_assist( 0 ),
+m_recv_only( 1 ),
+m_passive( 0 ),
+m_peer_expiry( pgm_secs (300) ),
+m_spmr_expiry( pgm_msecs (250) ),
+m_nak_bo_ivl( pgm_msecs (50) ),
+m_nak_rpt_ivl( pgm_secs (2) ),
+m_nak_rdata_ivl( pgm_secs (2) ),
+m_nak_data_retries( 50 ),
+m_nak_ncf_retries( 50 ),
+m_odata_max_rate( 60 * 1000 * 1000 ),
+m_nonblocking( 1 ),
+m_multicast_hops( 16 ),
+m_dscp( 0x2e << 2 )		/* Expedited Forwarding PHB for network elements, no ECN. */
 {
     memset( mWaitEvents, -1, sizeof(mWaitEvents) );
 }
@@ -51,6 +65,21 @@ int PGMReceiver::initVar()
     mSock = NULL;
     mMaxTpDu = 1500;
     mSqns = 100;
+    m_no_router_assist = 0;
+    m_recv_only = 1;
+    m_passive = 0;
+    m_peer_expiry = pgm_secs (300);
+    m_spmr_expiry = pgm_msecs (250);
+    m_nak_bo_ivl = pgm_msecs (50);
+    m_nak_rpt_ivl = pgm_secs (2);
+    m_nak_rdata_ivl = pgm_secs (2);
+    m_nak_data_retries = 50;
+    m_nak_ncf_retries = 50;
+    m_odata_max_rate = 60 * 1000 * 1000;
+    m_nonblocking = 1;
+    m_multicast_hops = 16;
+    m_dscp = 0x2e << 2;		/* Expedited Forwarding PHB for network elements, no ECN. */
+
     return PGM_SUCCESS;
 }
 
@@ -384,35 +413,23 @@ int PGMReceiver::onStartup()
     }
 
     /* Use RFC 2113 tagging for PGM Router Assist */
-    const int no_router_assist = 0;
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_IP_ROUTER_ALERT, &no_router_assist, sizeof(no_router_assist));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_IP_ROUTER_ALERT, &m_no_router_assist, sizeof(m_no_router_assist));
 
     pgm_drop_superuser();
 
     /* set PGM parameters */
-    const int recv_only = 1,
-        passive = 0,
-        peer_expiry = pgm_secs (300),
-        spmr_expiry = pgm_msecs (250),
-        nak_bo_ivl = pgm_msecs (50),
-        nak_rpt_ivl = pgm_secs (2),
-        nak_rdata_ivl = pgm_secs (2),
-        nak_data_retries = 50,
-        nak_ncf_retries = 50,
-		odata_max_rate = 60 * 1000 * 1000;
-
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_RECV_ONLY, &recv_only, sizeof(recv_only));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_PASSIVE, &passive, sizeof(passive));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_RECV_ONLY, &m_recv_only, sizeof(m_recv_only));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_PASSIVE, &m_passive, sizeof(m_passive));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MTU, &mMaxTpDu, sizeof(mMaxTpDu));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_RXW_SQNS, &mSqns, sizeof(mSqns));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_PEER_EXPIRY, &peer_expiry, sizeof(peer_expiry));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_SPMR_EXPIRY, &spmr_expiry, sizeof(spmr_expiry));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_BO_IVL, &nak_bo_ivl, sizeof(nak_bo_ivl));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RPT_IVL, &nak_rpt_ivl, sizeof(nak_rpt_ivl));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RDATA_IVL, &nak_rdata_ivl, sizeof(nak_rdata_ivl));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_DATA_RETRIES, &nak_data_retries, sizeof(nak_data_retries));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_NCF_RETRIES, &nak_ncf_retries, sizeof(nak_ncf_retries));
-	pgm_setsockopt (mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &odata_max_rate, sizeof(odata_max_rate));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_PEER_EXPIRY, &m_peer_expiry, sizeof(m_peer_expiry));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_SPMR_EXPIRY, &m_spmr_expiry, sizeof(m_spmr_expiry));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_BO_IVL, &m_nak_bo_ivl, sizeof(m_nak_bo_ivl));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RPT_IVL, &m_nak_rpt_ivl, sizeof(m_nak_rpt_ivl));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_RDATA_IVL, &m_nak_rdata_ivl, sizeof(m_nak_rdata_ivl));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_DATA_RETRIES, &m_nak_data_retries, sizeof(m_nak_data_retries));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NAK_NCF_RETRIES, &m_nak_ncf_retries, sizeof(m_nak_ncf_retries));
+	pgm_setsockopt (mSock, IPPROTO_PGM, PGM_ODATA_MAX_RTE, &m_odata_max_rate, sizeof(m_odata_max_rate));
 
 #ifdef I_UNDERSTAND_PGMCC_AND_FEC_ARE_NOT_SUPPORTED
     if (use_pgmcc) {
@@ -470,16 +487,13 @@ int PGMReceiver::onStartup()
     pgm_freeaddrinfo (res);
 
     /* set IP parameters */
-    const int nonblocking = 1,
-        multicast_loop = mUseMulticastLoop ? 1 : 0,
-        multicast_hops = 16,
-        dscp = 0x2e << 2;		/* Expedited Forwarding PHB for network elements, no ECN. */
+    const int multicast_loop = mUseMulticastLoop ? 1 : 0;
 
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_LOOP, &multicast_loop, sizeof(multicast_loop));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_HOPS, &multicast_hops, sizeof(multicast_hops));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_MULTICAST_HOPS, &m_multicast_hops, sizeof(m_multicast_hops));
     if (AF_INET6 != sa_family)
-        pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &dscp, sizeof(dscp));
-    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &nonblocking, sizeof(nonblocking));
+        pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &m_dscp, sizeof(m_dscp));
+    pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &m_nonblocking, sizeof(m_nonblocking));
 
     if (!pgm_connect (mSock, &pgm_err)) {
         fprintf (stderr, "Connecting PGM socket: %s\n", pgm_err->message);

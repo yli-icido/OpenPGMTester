@@ -29,7 +29,7 @@ m_ambient_spm( pgm_secs (30) ),
 m_blocking( 0 ),
 m_multicast_hops( 16 ),
 m_dscp( 0x2e << 2 ),		/* Expedited Forwarding PHB for network elements, no ECN. */
-mMaxODataRTE( 60*1000*1000 )
+mMaxODataRTE( 60*1000*1000 )    // 60Mb
 {
 }
 

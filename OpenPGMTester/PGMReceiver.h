@@ -40,5 +40,20 @@ private:
     int             mMaxTpDu;
     int             mSqns;
     WSAEVENT        mWaitEvents[ PGM_RECV_SOCKET_READ_COUNT + 1 ];
+    int             m_no_router_assist;
+    int             m_recv_only;
+    int             m_passive;
+    int             m_peer_expiry;
+    int             m_spmr_expiry;
+    int             m_nak_bo_ivl;
+    int             m_nak_rpt_ivl;
+    int             m_nak_rdata_ivl;
+    int             m_nak_data_retries;
+    int             m_nak_ncf_retries;
+    size_t          m_odata_max_rate;
+    int             m_nonblocking;
+    int             m_multicast_hops;
+    int             m_dscp;		/* Expedited Forwarding PHB for network elements, no ECN. */
+
 };
 #endif // PMGRECEIVER_H_
