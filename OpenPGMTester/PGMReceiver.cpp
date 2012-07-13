@@ -204,6 +204,15 @@ int PGMReceiver::connect()
                     fclose( pFileToWrite );
                     pFileToWrite = NULL;
                 }
+				else if ( strcmp( buffer, "-q" ) == 0 )
+				{
+					if ( pFileToWrite != NULL )
+					{
+						fclose( pFileToWrite );
+						pFileToWrite = NULL;
+					}
+					sIsTerminated = TRUE;
+				}
                 else if ( pFileToWrite != NULL )
                 {
                     fwrite( buffer, 1, len, pFileToWrite );
