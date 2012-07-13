@@ -29,7 +29,7 @@ m_ambient_spm( AMBIENT_SPM ),
 m_nonblocking( SENDER_NON_BLOCKING ),
 m_multicast_hops( MULTICAST_HOPS ),
 m_dscp( DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
-mMaxODataRTE( MAX_ODATA_RTE )
+mMaxODataRTE( (MAX_ODATA_RTE < MAX_TPDU) ? MAX_ODATA_RTE : MAX_TPDU )
 {
 }
 
