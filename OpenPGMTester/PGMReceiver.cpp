@@ -35,7 +35,7 @@ m_nak_rpt_ivl( NAK_RPT_IVL_SECS ),
 m_nak_rdata_ivl( NAK_RDATA_IVL_SECS ),
 m_nak_data_retries( NAK_DATA_RETRIES ),
 m_nak_ncf_retries( NAK_NCF_RETRIES ),
-m_odata_max_rate( (MAX_ODATA_RTE < MAX_TPDU) ? MAX_ODATA_RTE : MAX_TPDU ),
+m_odata_max_rate( ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) ),
 m_nonblocking( RECEIVER_NON_BLOCKING ),
 m_multicast_hops( MULTICAST_HOPS ),
 m_dscp( DSCP )		/* Expedited Forwarding PHB for network elements, no ECN. */
@@ -75,7 +75,8 @@ int PGMReceiver::initVar()
     m_nak_rdata_ivl = NAK_RDATA_IVL_SECS;
     m_nak_data_retries = NAK_DATA_RETRIES;
     m_nak_ncf_retries = NAK_NCF_RETRIES;
-    m_odata_max_rate = MAX_ODATA_RTE;
+    // if MAX_RTE is 0, use MAX_ODATA_RTE, if MAX_RTE is not 0, max odata rate should not be larger than MAX_RTE
+    m_odata_max_rate =  ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) ;
     m_nonblocking = RECEIVER_NON_BLOCKING;
     m_multicast_hops = MULTICAST_HOPS;
     m_dscp = DSCP;		/* Expedited Forwarding PHB for network elements, no ECN. */
