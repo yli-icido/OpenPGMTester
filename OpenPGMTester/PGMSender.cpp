@@ -148,10 +148,11 @@ int PGMSender::send()
             break;
         }
         vector< string > filenames;
-        string separator(";");
-        retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
-        if ( retval != PGM_SUCCESS )
-            break;
+        filenames.push_back( "C:\\Users\\yli\\Downloads\\codecompare.exe" );
+//         string separator(";");
+//         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
+//         if ( retval != PGM_SUCCESS )
+//             break;
 
         FILE* pFileToSend = NULL;
         char* buffer = new char[ PGM_BUFFER_SIZE ];
