@@ -7,7 +7,7 @@ const int PGM_FAILURE = 1;          // failed
 const int PGM_INVALID_PARAMS = 2;
 
 // both
-const int PGM_BUFFER_SIZE = 1024 * 1024 * 10;
+const int PGM_BUFFER_SIZE = 100 * 1024;
 const std::string PGM_MULTICAST_ADDRESS = ";224.0.12.136";
 const bool USE_UDP_ENCAP_PORT = false;
 const int MAX_RTE = 90*1000*1000;
