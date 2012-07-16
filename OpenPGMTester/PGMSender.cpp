@@ -148,7 +148,7 @@ int PGMSender::send()
             break;
         }
         vector< string > filenames;
-        filenames.push_back( "C:\\Users\\yli\\Downloads\\codecompare.exe" );
+        filenames.push_back( "C:\\Users\\yli\\Downloads\\mouse.sso" );
 //         string separator(";");
 //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
 //         if ( retval != PGM_SUCCESS )
