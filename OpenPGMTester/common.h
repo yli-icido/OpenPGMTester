@@ -7,19 +7,23 @@ const int PGM_FAILURE = 1;          // failed
 const int PGM_INVALID_PARAMS = 2;
 
 // both
-const int PGM_BUFFER_SIZE = 1024;
+const int PGM_BUFFER_SIZE = 4 * 1024;
 const std::string PGM_MULTICAST_ADDRESS = ";224.0.12.136";
 const bool USE_UDP_ENCAP_PORT = false;
 const int MAX_RTE = 0;
 const int RS_K = 0;
 const int RS_N = 0;
-const int MAX_TPDU = 1500;
-const int SQNS = 100;
+const int MAX_TPDU = 5 * 1024;
+const int SQNS = 5* 1000 * 1000;
 const int USE_MULTICAST_LOOP = 0;
 const int MULTICAST_HOPS = 16;
 const int NO_ROUTER_ASSIST = 0;
-const int MAX_ODATA_RTE = 1*1000*1000; // mbits
 const int DSCP = 0x2e << 2;
+// const UINT32 PGM_TXW_MAX_RATE = 75 * 1000 * 1000;
+const int MAX_ODATA_RTE = 1*1000*1000; // mbits
+
+// const size_t RATE_KBITS_PER_SEC = 50 * 1000;
+// const size_t WINDOW_SIZE_IN_MSECS = 60 * 1000;
 
 // sender only
 const int SEND_ONLY = 1;

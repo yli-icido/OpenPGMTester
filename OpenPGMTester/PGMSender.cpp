@@ -324,6 +324,13 @@ int PGMSender::createSocket()
         pgm_setsockopt (mSock, IPPROTO_PGM, PGM_TOS, &m_dscp, sizeof(m_dscp));
     pgm_setsockopt (mSock, IPPROTO_PGM, PGM_NOBLOCK, &m_nonblocking, sizeof(m_nonblocking));
 
+//     RM_SEND_WINDOW  window;
+//     int    rc;
+//     window.RateKbitsPerSec = RATE_KBITS_PER_SEC;
+//     window.WindowSizeInMSecs = WINDOW_SIZE_IN_MSECS;
+//     window.WindowSizeInBytes = (RATE_KBITS_PER_SEC/8) * WINDOW_SIZE_IN_MSECS;
+//     pgm_setsockopt(mSock, IPPROTO_RM, RM_RATE_WINDOW_SIZE, (char *)&window, sizeof(window));
+
     if (!pgm_connect (mSock, &pgm_err)) {
         fprintf (stderr, "Connecting PGM socket: %s\n", pgm_err->message);
         goto err_abort;
