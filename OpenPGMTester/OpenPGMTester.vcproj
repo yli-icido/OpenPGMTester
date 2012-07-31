@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../include"
+				AdditionalIncludeDirectories="./;../include;./OpenPGM;./MSPGM"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -178,18 +178,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PGMReceiver.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PGMSender.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\PGMUtils.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
@@ -204,15 +192,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PGMReceiver.h"
+				RelativePath=".\Receiver.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PGMSender.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PGMUtils.h"
+				RelativePath=".\Sender.h"
 				>
 			</File>
 			<File
@@ -229,6 +213,70 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="MSPGM"
+			>
+			<File
+				RelativePath=".\MSPGM\mspgm_config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MSPGM\MSPGMReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MSPGM\MSPGMReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MSPGM\MSPGMSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MSPGM\MSPGMSender.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="OpenPGM"
+			>
+			<File
+				RelativePath=".\OpenPGM\openpgm_config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMReliableSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMReliableSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMSender.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMUtils.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OpenPGM\OpenPGMUtils.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ReadMe.txt"
