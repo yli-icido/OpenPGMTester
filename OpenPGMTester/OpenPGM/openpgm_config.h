@@ -3,7 +3,7 @@
 
 // both
 const int OPENPGM_BUFFER_SIZE = 1024;
-const std::string OPENPGM_MULTICAST_ADDRESS = ";224.0.12.136";
+const std::string OPENPGM_MULTICAST_ADDRESS = ";234.5.6.7";
 const int OPENPGM_DATA_DESTINATION_PORT = 5150;
 const bool OPENPGM_USE_UDP_ENCAP_PORT = false;
 const int OPENPGM_MAX_RTE = 400 * 1000; /* very conservative rate, 2.5mb/s */

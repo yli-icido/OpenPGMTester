@@ -148,7 +148,7 @@ int OpenPGMSender::send()
             break;
         }
         vector< string > filenames;
-        filenames.push_back( "C:\\Users\\yli\\Downloads\\mouse.sso" );
+        filenames.push_back( "C:\\7zip_9.28.0.0.exe" );
 //         string separator(";");
 //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
 //         if ( retval != PGM_SUCCESS )
@@ -180,6 +180,8 @@ int OpenPGMSender::send()
             size_t sizeToRead = OPENPGM_BUFFER_SIZE;
             rewind( pFileToSend );
             size_t readResult = 0;
+            int iSizeSend = 0;
+            int iSizeToPause = 5 * 1000;
             while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
                 if ( fileSize - curPos < OPENPGM_BUFFER_SIZE )
@@ -198,11 +200,17 @@ int OpenPGMSender::send()
 
                 fwrite( buffer, 1, readResult, pFileToWrite );
                 status = pgm_send (mSock, buffer, readResult, NULL);
+                iSizeSend += readResult;
                 if (PGM_IO_STATUS_NORMAL != status) 
                 {
                     fprintf (stderr, "pgm_send() failed.\n");
                 }
-//                 Sleep( 500 );
+                else if ( iSizeSend >= iSizeToPause )
+                {
+                    iSizeSend = 0;
+                    Sleep( 500 );
+                }
+
             }
             fclose( pFileToSend );
             pFileToSend = NULL;
