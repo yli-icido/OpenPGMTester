@@ -12,7 +12,7 @@ MSPGMReceiver::MSPGMReceiver() :
 mInitDone( false ),
 mIsToQuit( false ),
 mNetwork( MSPGM_MULTICAST_ADDRESS ),
-mPort( MSPGM_DEFAULT_DATA_DESTINATION_PORT ),
+mPort( MSPGM_DATA_DESTINATION_PORT ),
 mClientSocket( NULL )
 {
 }
@@ -27,7 +27,7 @@ int MSPGMReceiver::initVar()
     mInitDone = false;
     mIsToQuit = false;
     mNetwork = MSPGM_MULTICAST_ADDRESS;
-    mPort = MSPGM_DEFAULT_DATA_DESTINATION_PORT;
+    mPort = MSPGM_DATA_DESTINATION_PORT;
     mClientSocket = NULL;
     return PGM_SUCCESS;
 }

@@ -108,7 +108,7 @@ OpenPGMReliableSender::OpenPGMReliableSender():
 mInitDone( false ),
 mIsToQuit( false ),
 mNetwork( OPENPGM_MULTICAST_ADDRESS ),
-mPort( DEFAULT_DATA_DESTINATION_PORT ),
+mPort( OPENPGM_DATA_DESTINATION_PORT ),
 mUdpEncapPort( OPENPGM_USE_UDP_ENCAP_PORT ),
 mMaxRte( OPENPGM_MAX_RTE ),
 mUseFec( FALSE ),
@@ -139,7 +139,7 @@ int OpenPGMReliableSender::initVar()
     mInitDone = false;
     mIsToQuit = false;
     mNetwork = OPENPGM_MULTICAST_ADDRESS;
-    mPort = DEFAULT_DATA_DESTINATION_PORT;
+    mPort = OPENPGM_DATA_DESTINATION_PORT;
     mUdpEncapPort = OPENPGM_USE_UDP_ENCAP_PORT;
     mMaxRte = OPENPGM_MAX_RTE;
     mUseFec = FALSE;
@@ -397,7 +397,7 @@ int OpenPGMReliableSender::createSocket()
     /* create global session identifier */
     struct pgm_sockaddr_t addr;
     memset (&addr, 0, sizeof(addr));
-    addr.sa_port = mPort ? mPort : DEFAULT_DATA_DESTINATION_PORT;
+    addr.sa_port = mPort ? mPort : OPENPGM_DATA_DESTINATION_PORT;
     addr.sa_addr.sport = DEFAULT_DATA_SOURCE_PORT;
     if (!pgm_gsi_create_from_hostname (&addr.sa_addr.gsi, &pgm_err)) {
         fprintf (stderr, "Creating GSI: %s\n", pgm_err->message);
