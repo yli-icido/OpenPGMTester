@@ -1,7 +1,7 @@
 #ifndef PGMUTILS_H_
 #define PGMUTILS_H_
 
-class PGMUtils
+class OpenPGMUtils
 {
 public: 
 //     int     getopt();

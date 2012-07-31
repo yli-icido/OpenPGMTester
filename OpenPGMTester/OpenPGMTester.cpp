@@ -3,8 +3,11 @@
 
 #include "stdafx.h"
 #include "pgm/pgm.h"
-#include "PGMReceiver.h"
-#include "PGMSender.h"
+#include "OpenPGMReceiver.h"
+#include "OpenPGMSender.h"
+#include "MSPGMReceiver.h"
+#include "MSPGMSender.h"
+#include "OpenPGMReliableSender.h"
 
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
@@ -27,7 +30,7 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                Sender* sender = new PGMSender();
+                Sender* sender = new OpenPGMReliableSender();
                 if ( sender == NULL ) break;
 
                 if ( sender->init() != PGM_SUCCESS ) 
@@ -48,7 +51,7 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                Receiver* receiver = new PGMReceiver();
+                Receiver* receiver = new OpenPGMReceiver();
                 if ( receiver == NULL ) break;
 
                 if ( receiver->init() != PGM_SUCCESS )

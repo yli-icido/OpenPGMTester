@@ -1,69 +1,69 @@
 #include "stdafx.h"
 #include "pgm/log.h"
-#include "PGMUtils.h"
+#include "OpenPGMUtils.h"
 
-#include "PGMSender.h"
+#include "OpenPGMSender.h"
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
 
 using namespace std;
 
 
-PGMSender::PGMSender():
+OpenPGMSender::OpenPGMSender():
 mInitDone( false ),
 mIsToQuit( false ),
-mNetwork( PGM_MULTICAST_ADDRESS ),
+mNetwork( OPENPGM_MULTICAST_ADDRESS ),
 mPort( DEFAULT_DATA_DESTINATION_PORT ),
-mUdpEncapPort( USE_UDP_ENCAP_PORT ),
-mMaxRte( MAX_RTE ),
+mUdpEncapPort( OPENPGM_USE_UDP_ENCAP_PORT ),
+mMaxRte( OPENPGM_MAX_RTE ),
 mUseFec( FALSE ),
-mRsK( RS_K ),
-mRsN( RS_N ),
-mUseMulticastLoop( USE_MULTICAST_LOOP ),
+mRsK( OPENPGM_RS_K ),
+mRsN( OPENPGM_RS_N ),
+mUseMulticastLoop( OPENPGM_USE_MULTICAST_LOOP ),
 mSock( NULL ),
-mMaxTpDu( MAX_TPDU ),
-mSqns( SQNS ), 
-m_no_router_assist( NO_ROUTER_ASSIST ),
-m_send_only( SEND_ONLY ),
-m_ambient_spm( AMBIENT_SPM ),
-m_nonblocking( SENDER_NON_BLOCKING ),
-m_multicast_hops( MULTICAST_HOPS ),
-m_dscp( DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
-mMaxODataRTE( ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) )
+mMaxTpDu( OPENPGM_MAX_TPDU ),
+mSqns( OPENPGM_SQNS ), 
+m_no_router_assist( OPENPGM_NO_ROUTER_ASSIST ),
+m_send_only( OPENPGM_SEND_ONLY ),
+m_ambient_spm( OPENPGM_AMBIENT_SPM ),
+m_nonblocking( OPENPGM_SENDER_NON_BLOCKING ),
+m_multicast_hops( OPENPGM_MULTICAST_HOPS ),
+m_dscp( OPENPGM_DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxODataRTE( ( OPENPGM_MAX_RTE == 0 ) ? OPENPGM_MAX_ODATA_RTE : ( (OPENPGM_MAX_ODATA_RTE < OPENPGM_MAX_RTE) ? OPENPGM_MAX_ODATA_RTE : OPENPGM_MAX_RTE ) )
 {
 }
 
-PGMSender::~PGMSender()
+OpenPGMSender::~OpenPGMSender()
 {
     shutdown();
 }
 
-int PGMSender::initVar()
+int OpenPGMSender::initVar()
 {
     mInitDone = false;
     mIsToQuit = false;
-    mNetwork = PGM_MULTICAST_ADDRESS;
+    mNetwork = OPENPGM_MULTICAST_ADDRESS;
     mPort = DEFAULT_DATA_DESTINATION_PORT;
-    mUdpEncapPort = USE_UDP_ENCAP_PORT;
-    mMaxRte = MAX_RTE;
+    mUdpEncapPort = OPENPGM_USE_UDP_ENCAP_PORT;
+    mMaxRte = OPENPGM_MAX_RTE;
     mUseFec = FALSE;
-    mRsK = RS_K;
-    mRsN = RS_N;
-    mUseMulticastLoop = USE_MULTICAST_LOOP;
+    mRsK = OPENPGM_RS_K;
+    mRsN = OPENPGM_RS_N;
+    mUseMulticastLoop = OPENPGM_USE_MULTICAST_LOOP;
     mSock = NULL;
-    mMaxTpDu = MAX_TPDU;
-    mSqns = SQNS;
-    m_no_router_assist = NO_ROUTER_ASSIST;
-    m_send_only = SEND_ONLY;
-    m_ambient_spm = AMBIENT_SPM;
-    m_nonblocking = SENDER_NON_BLOCKING;
-    m_multicast_hops = MULTICAST_HOPS;
-    m_dscp = DSCP;
-    mMaxODataRTE = MAX_ODATA_RTE;
+    mMaxTpDu = OPENPGM_MAX_TPDU;
+    mSqns = OPENPGM_SQNS;
+    m_no_router_assist = OPENPGM_NO_ROUTER_ASSIST;
+    m_send_only = OPENPGM_SEND_ONLY;
+    m_ambient_spm = OPENPGM_AMBIENT_SPM;
+    m_nonblocking = OPENPGM_SENDER_NON_BLOCKING;
+    m_multicast_hops = OPENPGM_MULTICAST_HOPS;
+    m_dscp = OPENPGM_DSCP;
+    mMaxODataRTE = OPENPGM_MAX_ODATA_RTE;
     return PGM_SUCCESS;
 }
 
-int PGMSender::init()
+int OpenPGMSender::init()
 {
     pgm_error_t* pgm_err = NULL;
 
@@ -79,7 +79,7 @@ int PGMSender::init()
     return PGM_SUCCESS;
 }
 
-int PGMSender::shutdown()
+int OpenPGMSender::shutdown()
 {
     /* cleanup */
     if ( mSock ) 
@@ -91,7 +91,7 @@ int PGMSender::shutdown()
     return PGM_SUCCESS;
 }
 
-int PGMSender::connect()
+int OpenPGMSender::connect()
 {
     int retval = PGM_FAILURE;
     if ( !mInitDone ) 
@@ -128,7 +128,7 @@ int PGMSender::connect()
     return retval;
 }
 
-int PGMSender::send()
+int OpenPGMSender::send()
 {
     int retval = PGM_FAILURE;
     string userInput;
@@ -155,7 +155,7 @@ int PGMSender::send()
 //             break;
 
         FILE* pFileToSend = NULL;
-        char* buffer = new char[ PGM_BUFFER_SIZE ];
+        char* buffer = new char[ OPENPGM_BUFFER_SIZE ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
         char fileToWrite[10];
@@ -177,12 +177,12 @@ int PGMSender::send()
             fseek( pFileToSend, 0, SEEK_END );
             size_t fileSize = ftell( pFileToSend );
             size_t curPos = 0;
-            size_t sizeToRead = PGM_BUFFER_SIZE;
+            size_t sizeToRead = OPENPGM_BUFFER_SIZE;
             rewind( pFileToSend );
             size_t readResult = 0;
             while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
-                if ( fileSize - curPos < PGM_BUFFER_SIZE )
+                if ( fileSize - curPos < OPENPGM_BUFFER_SIZE )
                 {
                     sizeToRead = fileSize - curPos;
                 }
@@ -215,7 +215,7 @@ int PGMSender::send()
     return retval;
 }
 
-int PGMSender::createSocket()
+int OpenPGMSender::createSocket()
 {
     int retval = PGM_FAILURE;
     struct pgm_addrinfo_t* res = NULL;
@@ -354,7 +354,7 @@ err_abort:
     return PGM_FATAL;
 }
 
-void PGMSender::usage()
+void OpenPGMSender::usage()
 {
     cout << "Usage send: [options] message" << endl;
     cout << "  -n <network>    : Multicast group or unicast IP address" << endl;
@@ -370,7 +370,7 @@ void PGMSender::usage()
 }
 
 // take the complete option string, analyse if the user input option is valid
-int PGMSender::analyseOptions( string& options )
+int OpenPGMSender::analyseOptions( string& options )
 {
     const string supportedOptions("nsprfKNlih?q");
     int retval = PGM_FAILURE;
@@ -378,7 +378,7 @@ int PGMSender::analyseOptions( string& options )
     {
         map< char, string > optionPairs;
 
-        retval = PGMUtils::intoOptions( options, optionPairs );
+        retval = OpenPGMUtils::intoOptions( options, optionPairs );
         if ( retval != PGM_SUCCESS )
         {
             break;
@@ -447,7 +447,7 @@ int PGMSender::analyseOptions( string& options )
     return retval;
 }
 
-int PGMSender::verifyOptions( std::map< char, std::string >& options )
+int OpenPGMSender::verifyOptions( std::map< char, std::string >& options )
 {
     int retval = PGM_FAILURE;
     if ( mUseFec && ( !mRsN || !mRsK ) ) 

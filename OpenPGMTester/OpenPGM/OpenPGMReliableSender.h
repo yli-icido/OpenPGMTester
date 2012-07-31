@@ -1,19 +1,21 @@
-#ifndef PGMSENDER_H_
-#define PGMSENDER_H_
+#ifndef PGM_RELIABLE_SENDER_H_
+#define PGM_RELIABLE_SENDER_H_
 
 #include <vector>
+#include "openpgm_config.h"
 #include "Sender.h"
 
-class PGMSender : public Sender
+class OpenPGMReliableSender : public Sender
 {
 public:
-    PGMSender();
-    virtual ~PGMSender();
+    OpenPGMReliableSender();
+    virtual ~OpenPGMReliableSender();
 
     virtual int     init();
     virtual int     connect();
     virtual int     send();
     virtual int     shutdown();
+    bool            isToQuit() { return mIsToQuit; }
 
 private:
     int     initVar();
@@ -21,6 +23,7 @@ private:
     int     analyseOptions( std::string& options );
     int     verifyOptions( std::map< char, std::string >& options );
     int     createSocket();
+    int     createNakThread();
 
 private:
     bool            mInitDone;
@@ -43,5 +46,6 @@ private:
     int             m_multicast_hops;
     int             m_dscp;
     size_t          mMaxODataRTE;
+    HANDLE          mNakThread;
 };
-#endif // PGMSENDER_H_
+#endif // PGM_RELIABLE_SENDER_H_

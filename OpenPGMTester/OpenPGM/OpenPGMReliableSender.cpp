@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include <process.h>
 #include "pgm/log.h"
-#include "PGMUtils.h"
+#include "OpenPGMUtils.h"
 
-#include "PGMReliableSender.h"
+#include "OpenPGMReliableSender.h"
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
 
@@ -12,7 +12,7 @@ using namespace std;
 struct Nak_Routine_Param
 {
     pgm_sock_t* sock;
-    PGMReliableSender* sender;
+    OpenPGMReliableSender* sender;
 };
 
 unsigned __stdcall nak_routine( void* arg )
@@ -21,7 +21,7 @@ unsigned __stdcall nak_routine( void* arg )
     /* dispatch loop */
     Nak_Routine_Param* param = ( Nak_Routine_Param* )arg;
     pgm_sock_t* nak_sock = param->sock;
-    PGMReliableSender* sender = param->sender;
+    OpenPGMReliableSender* sender = param->sender;
 #ifndef _WIN32
     int fds;
     fd_set readfds;
@@ -104,63 +104,63 @@ block:
     return retval;
 }
 
-PGMReliableSender::PGMReliableSender():
+OpenPGMReliableSender::OpenPGMReliableSender():
 mInitDone( false ),
 mIsToQuit( false ),
-mNetwork( PGM_MULTICAST_ADDRESS ),
+mNetwork( OPENPGM_MULTICAST_ADDRESS ),
 mPort( DEFAULT_DATA_DESTINATION_PORT ),
-mUdpEncapPort( USE_UDP_ENCAP_PORT ),
-mMaxRte( MAX_RTE ),
+mUdpEncapPort( OPENPGM_USE_UDP_ENCAP_PORT ),
+mMaxRte( OPENPGM_MAX_RTE ),
 mUseFec( FALSE ),
-mRsK( RS_K ),
-mRsN( RS_N ),
-mUseMulticastLoop( USE_MULTICAST_LOOP ),
+mRsK( OPENPGM_RS_K ),
+mRsN( OPENPGM_RS_N ),
+mUseMulticastLoop( OPENPGM_USE_MULTICAST_LOOP ),
 mSock( NULL ),
-mMaxTpDu( MAX_TPDU ),
-mSqns( SQNS ), 
-m_no_router_assist( NO_ROUTER_ASSIST ),
-m_send_only( SEND_ONLY ),
-m_ambient_spm( AMBIENT_SPM ),
-m_nonblocking( SENDER_NON_BLOCKING ),
-m_multicast_hops( MULTICAST_HOPS ),
-m_dscp( DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
-mMaxODataRTE( ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) ),
+mMaxTpDu( OPENPGM_MAX_TPDU ),
+mSqns( OPENPGM_SQNS ), 
+m_no_router_assist( OPENPGM_NO_ROUTER_ASSIST ),
+m_send_only( OPENPGM_SEND_ONLY ),
+m_ambient_spm( OPENPGM_AMBIENT_SPM ),
+m_nonblocking( OPENPGM_SENDER_NON_BLOCKING ),
+m_multicast_hops( OPENPGM_MULTICAST_HOPS ),
+m_dscp( OPENPGM_DSCP ),		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxODataRTE( ( OPENPGM_MAX_RTE == 0 ) ? OPENPGM_MAX_ODATA_RTE : ( (OPENPGM_MAX_ODATA_RTE < OPENPGM_MAX_RTE) ? OPENPGM_MAX_ODATA_RTE : OPENPGM_MAX_RTE ) ),
 mNakThread( INVALID_HANDLE_VALUE )
 {
 }
 
-PGMReliableSender::~PGMReliableSender()
+OpenPGMReliableSender::~OpenPGMReliableSender()
 {
     shutdown();
 }
 
-int PGMReliableSender::initVar()
+int OpenPGMReliableSender::initVar()
 {
     mInitDone = false;
     mIsToQuit = false;
-    mNetwork = PGM_MULTICAST_ADDRESS;
+    mNetwork = OPENPGM_MULTICAST_ADDRESS;
     mPort = DEFAULT_DATA_DESTINATION_PORT;
-    mUdpEncapPort = USE_UDP_ENCAP_PORT;
-    mMaxRte = MAX_RTE;
+    mUdpEncapPort = OPENPGM_USE_UDP_ENCAP_PORT;
+    mMaxRte = OPENPGM_MAX_RTE;
     mUseFec = FALSE;
-    mRsK = RS_K;
-    mRsN = RS_N;
-    mUseMulticastLoop = USE_MULTICAST_LOOP;
+    mRsK = OPENPGM_RS_K;
+    mRsN = OPENPGM_RS_N;
+    mUseMulticastLoop = OPENPGM_USE_MULTICAST_LOOP;
     mSock = NULL;
-    mMaxTpDu = MAX_TPDU;
-    mSqns = SQNS;
-    m_no_router_assist = NO_ROUTER_ASSIST;
-    m_send_only = SEND_ONLY;
-    m_ambient_spm = AMBIENT_SPM;
-    m_nonblocking = SENDER_NON_BLOCKING;
-    m_multicast_hops = MULTICAST_HOPS;
-    m_dscp = DSCP;
-    mMaxODataRTE = MAX_ODATA_RTE;
+    mMaxTpDu = OPENPGM_MAX_TPDU;
+    mSqns = OPENPGM_SQNS;
+    m_no_router_assist = OPENPGM_NO_ROUTER_ASSIST;
+    m_send_only = OPENPGM_SEND_ONLY;
+    m_ambient_spm = OPENPGM_AMBIENT_SPM;
+    m_nonblocking = OPENPGM_SENDER_NON_BLOCKING;
+    m_multicast_hops = OPENPGM_MULTICAST_HOPS;
+    m_dscp = OPENPGM_DSCP;
+    mMaxODataRTE = OPENPGM_MAX_ODATA_RTE;
     mNakThread = INVALID_HANDLE_VALUE;
     return PGM_SUCCESS;
 }
 
-int PGMReliableSender::init()
+int OpenPGMReliableSender::init()
 {
     pgm_error_t* pgm_err = NULL;
 
@@ -176,7 +176,7 @@ int PGMReliableSender::init()
     return PGM_SUCCESS;
 }
 
-int PGMReliableSender::shutdown()
+int OpenPGMReliableSender::shutdown()
 {
     /* cleanup */
     if ( mSock ) 
@@ -188,7 +188,7 @@ int PGMReliableSender::shutdown()
     return PGM_SUCCESS;
 }
 
-int PGMReliableSender::connect()
+int OpenPGMReliableSender::connect()
 {
     int retval = PGM_FAILURE;
     if ( !mInitDone ) 
@@ -232,7 +232,7 @@ int PGMReliableSender::connect()
     return retval;
 }
 
-int PGMReliableSender::send()
+int OpenPGMReliableSender::send()
 {
     int retval = PGM_FAILURE;
     string userInput;
@@ -261,7 +261,7 @@ int PGMReliableSender::send()
         //             break;
 
         FILE* pFileToSend = NULL;
-        char* buffer = new char[ PGM_BUFFER_SIZE ];
+        char* buffer = new char[ OPENPGM_BUFFER_SIZE ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
         char fileToWrite[10];
@@ -283,12 +283,12 @@ int PGMReliableSender::send()
             fseek( pFileToSend, 0, SEEK_END );
             size_t fileSize = ftell( pFileToSend );
             size_t curPos = 0;
-            size_t sizeToRead = PGM_BUFFER_SIZE;
+            size_t sizeToRead = OPENPGM_BUFFER_SIZE;
             rewind( pFileToSend );
             size_t readResult = 0;
             while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
             {
-                if ( fileSize - curPos < PGM_BUFFER_SIZE )
+                if ( fileSize - curPos < OPENPGM_BUFFER_SIZE )
                 {
                     sizeToRead = fileSize - curPos;
                 }
@@ -321,7 +321,7 @@ int PGMReliableSender::send()
     return retval;
 }
 
-int PGMReliableSender::createSocket()
+int OpenPGMReliableSender::createSocket()
 {
     int retval = PGM_FAILURE;
     struct pgm_addrinfo_t* res = NULL;
@@ -470,7 +470,7 @@ err_abort:
     return PGM_FATAL;
 }
 
-int PGMReliableSender::createNakThread()
+int OpenPGMReliableSender::createNakThread()
 {
     int retval = PGM_FAILURE;
     do 
@@ -490,7 +490,7 @@ int PGMReliableSender::createNakThread()
 }
 
 
-void PGMReliableSender::usage()
+void OpenPGMReliableSender::usage()
 {
     fprintf (stderr, "Usage: %s [options]\n");
     fprintf (stderr, "  -n <network>    : Multicast group or unicast IP address\n");
@@ -507,7 +507,7 @@ void PGMReliableSender::usage()
 }
 
 // take the complete option string, analyse if the user input option is valid
-int PGMReliableSender::analyseOptions( string& options )
+int OpenPGMReliableSender::analyseOptions( string& options )
 {
     const string supportedOptions("nsprfKNlih?q");
     int retval = PGM_FAILURE;
@@ -515,7 +515,7 @@ int PGMReliableSender::analyseOptions( string& options )
     {
         map< char, string > optionPairs;
 
-        retval = PGMUtils::intoOptions( options, optionPairs );
+        retval = OpenPGMUtils::intoOptions( options, optionPairs );
         if ( retval != PGM_SUCCESS )
         {
             break;
@@ -584,7 +584,7 @@ int PGMReliableSender::analyseOptions( string& options )
     return retval;
 }
 
-int PGMReliableSender::verifyOptions( std::map< char, std::string >& options )
+int OpenPGMReliableSender::verifyOptions( std::map< char, std::string >& options )
 {
     int retval = PGM_FAILURE;
     if ( mUseFec && ( !mRsN || !mRsK ) ) 

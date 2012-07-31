@@ -1,13 +1,14 @@
 #ifndef PMGRECEIVER_H_
 #define PMGRECEIVER_H_
 
+#include "openpgm_config.h"
 #include "Receiver.h"
 
-class PGMReceiver : public Receiver
+class OpenPGMReceiver : public Receiver
 {
 public:
-    PGMReceiver();
-    virtual ~PGMReceiver();
+    OpenPGMReceiver();
+    virtual ~OpenPGMReceiver();
 
     virtual int     init();
     virtual int     connect();

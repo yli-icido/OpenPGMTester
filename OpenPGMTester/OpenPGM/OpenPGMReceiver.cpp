@@ -1,90 +1,90 @@
 #include "stdafx.h"
 #include "pgm/log.h"
-#include "PGMUtils.h"
+#include "OpenPGMUtils.h"
 
-#include "PGMReceiver.h"
+#include "OpenPGMReceiver.h"
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
 
 using namespace std;
 
-WSAEVENT PGMReceiver::sTerminateEvent = INVALID_HANDLE_VALUE;
-BOOL     PGMReceiver::sIsTerminated = FALSE;
+WSAEVENT OpenPGMReceiver::sTerminateEvent = INVALID_HANDLE_VALUE;
+BOOL     OpenPGMReceiver::sIsTerminated = FALSE;
 
-PGMReceiver::PGMReceiver() : 
+OpenPGMReceiver::OpenPGMReceiver() : 
 mInitDone( false ),
 mIsToQuit( false ),
-mNetwork( PGM_MULTICAST_ADDRESS ),
+mNetwork( OPENPGM_MULTICAST_ADDRESS ),
 mPort( DEFAULT_DATA_DESTINATION_PORT ),
-mUdpEncapPort( USE_UDP_ENCAP_PORT ),
+mUdpEncapPort( OPENPGM_USE_UDP_ENCAP_PORT ),
 mUsePgmcc( FALSE ),
 mUseFec( FALSE ),
-mRsK( RS_K ),
-mRsN( RS_N ),
-mUseMulticastLoop( USE_MULTICAST_LOOP ),
+mRsK( OPENPGM_RS_K ),
+mRsN( OPENPGM_RS_N ),
+mUseMulticastLoop( OPENPGM_USE_MULTICAST_LOOP ),
 mSock( NULL ), 
-mMaxTpDu( MAX_TPDU ),
-mSqns( SQNS ),
-m_no_router_assist( NO_ROUTER_ASSIST ),
-m_recv_only( RECEIVE_ONLY ),
-m_passive( PASSIVE ),
-m_peer_expiry( PEER_EXPIRY_SECS ),
-m_spmr_expiry( SPMR_EXPIRY_MSECS ),
-m_nak_bo_ivl( NAK_BO_IVL_MSECS ),
-m_nak_rpt_ivl( NAK_RPT_IVL_SECS ),
-m_nak_rdata_ivl( NAK_RDATA_IVL_SECS ),
-m_nak_data_retries( NAK_DATA_RETRIES ),
-m_nak_ncf_retries( NAK_NCF_RETRIES ),
-m_odata_max_rate( ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) ),
-m_nonblocking( RECEIVER_NON_BLOCKING ),
-m_multicast_hops( MULTICAST_HOPS ),
-m_dscp( DSCP )		/* Expedited Forwarding PHB for network elements, no ECN. */
+mMaxTpDu( OPENPGM_MAX_TPDU ),
+mSqns( OPENPGM_SQNS ),
+m_no_router_assist( OPENPGM_NO_ROUTER_ASSIST ),
+m_recv_only( OPENPGM_RECEIVE_ONLY ),
+m_passive( OPENPGM_PASSIVE ),
+m_peer_expiry( OPENPGM_PEER_EXPIRY_SECS ),
+m_spmr_expiry( OPENPGM_SPMR_EXPIRY_MSECS ),
+m_nak_bo_ivl( OPENPGM_NAK_BO_IVL_MSECS ),
+m_nak_rpt_ivl( OPENPGM_NAK_RPT_IVL_SECS ),
+m_nak_rdata_ivl( OPENPGM_NAK_RDATA_IVL_SECS ),
+m_nak_data_retries( OPENPGM_NAK_DATA_RETRIES ),
+m_nak_ncf_retries( OPENPGM_NAK_NCF_RETRIES ),
+m_odata_max_rate( ( OPENPGM_MAX_RTE == 0 ) ? OPENPGM_MAX_ODATA_RTE : ( (OPENPGM_MAX_ODATA_RTE < OPENPGM_MAX_RTE) ? OPENPGM_MAX_ODATA_RTE : OPENPGM_MAX_RTE ) ),
+m_nonblocking( OPENPGM_RECEIVER_NON_BLOCKING ),
+m_multicast_hops( OPENPGM_MULTICAST_HOPS ),
+m_dscp( OPENPGM_DSCP )		/* Expedited Forwarding PHB for network elements, no ECN. */
 {
     memset( mWaitEvents, -1, sizeof(mWaitEvents) );
 }
 
-PGMReceiver::~PGMReceiver()
+OpenPGMReceiver::~OpenPGMReceiver()
 {
     shutdown();
 }
 
-int PGMReceiver::initVar()
+int OpenPGMReceiver::initVar()
 {
     mInitDone = false;
     mIsToQuit = false;
-    mNetwork = PGM_MULTICAST_ADDRESS;
+    mNetwork = OPENPGM_MULTICAST_ADDRESS;
     mPort = DEFAULT_DATA_DESTINATION_PORT;
-    mUdpEncapPort = USE_UDP_ENCAP_PORT;
+    mUdpEncapPort = OPENPGM_USE_UDP_ENCAP_PORT;
     mUsePgmcc = FALSE;
     mUseFec = FALSE;
-    mRsK = RS_K;
-    mRsN = RS_N;
-    mUseMulticastLoop = USE_MULTICAST_LOOP;
+    mRsK = OPENPGM_RS_K;
+    mRsN = OPENPGM_RS_N;
+    mUseMulticastLoop = OPENPGM_USE_MULTICAST_LOOP;
     sTerminateEvent = INVALID_HANDLE_VALUE;
     sIsTerminated = FALSE;
     mSock = NULL;
-    mMaxTpDu = MAX_TPDU;
-    mSqns = SQNS;
-    m_no_router_assist = NO_ROUTER_ASSIST;
-    m_recv_only = RECEIVE_ONLY;
-    m_passive = PASSIVE;
-    m_peer_expiry = PEER_EXPIRY_SECS;
-    m_spmr_expiry = SPMR_EXPIRY_MSECS;
-    m_nak_bo_ivl = NAK_BO_IVL_MSECS;
-    m_nak_rpt_ivl = NAK_RPT_IVL_SECS;
-    m_nak_rdata_ivl = NAK_RDATA_IVL_SECS;
-    m_nak_data_retries = NAK_DATA_RETRIES;
-    m_nak_ncf_retries = NAK_NCF_RETRIES;
+    mMaxTpDu = OPENPGM_MAX_TPDU;
+    mSqns = OPENPGM_SQNS;
+    m_no_router_assist = OPENPGM_NO_ROUTER_ASSIST;
+    m_recv_only = OPENPGM_RECEIVE_ONLY;
+    m_passive = OPENPGM_PASSIVE;
+    m_peer_expiry = OPENPGM_PEER_EXPIRY_SECS;
+    m_spmr_expiry = OPENPGM_SPMR_EXPIRY_MSECS;
+    m_nak_bo_ivl = OPENPGM_NAK_BO_IVL_MSECS;
+    m_nak_rpt_ivl = OPENPGM_NAK_RPT_IVL_SECS;
+    m_nak_rdata_ivl = OPENPGM_NAK_RDATA_IVL_SECS;
+    m_nak_data_retries = OPENPGM_NAK_DATA_RETRIES;
+    m_nak_ncf_retries = OPENPGM_NAK_NCF_RETRIES;
     // if MAX_RTE is 0, use MAX_ODATA_RTE, if MAX_RTE is not 0, max odata rate should not be larger than MAX_RTE
-    m_odata_max_rate =  ( MAX_RTE == 0 ) ? MAX_ODATA_RTE : ( (MAX_ODATA_RTE < MAX_RTE) ? MAX_ODATA_RTE : MAX_RTE ) ;
-    m_nonblocking = RECEIVER_NON_BLOCKING;
-    m_multicast_hops = MULTICAST_HOPS;
-    m_dscp = DSCP;		/* Expedited Forwarding PHB for network elements, no ECN. */
+    m_odata_max_rate =  ( OPENPGM_MAX_RTE == 0 ) ? OPENPGM_MAX_ODATA_RTE : ( (OPENPGM_MAX_ODATA_RTE < OPENPGM_MAX_RTE) ? OPENPGM_MAX_ODATA_RTE : OPENPGM_MAX_RTE ) ;
+    m_nonblocking = OPENPGM_RECEIVER_NON_BLOCKING;
+    m_multicast_hops = OPENPGM_MULTICAST_HOPS;
+    m_dscp = OPENPGM_DSCP;		/* Expedited Forwarding PHB for network elements, no ECN. */
 
     return PGM_SUCCESS;
 }
 
-void PGMReceiver::usage()
+void OpenPGMReceiver::usage()
 {
     fprintf (stderr, "Usage: receive [options]\n");
     fprintf (stderr, "  -n <network>    : Multicast group or unicast IP address\n");
@@ -98,7 +98,7 @@ void PGMReceiver::usage()
     fprintf (stderr, "  -i              : List available interfaces\n");
 }
 
-int PGMReceiver::init()
+int OpenPGMReceiver::init()
 {
     pgm_error_t* pgm_err = NULL;
 
@@ -114,7 +114,7 @@ int PGMReceiver::init()
     return PGM_SUCCESS;
 }
 
-int PGMReceiver::connect()
+int OpenPGMReceiver::connect()
 {
     int retval = PGM_FAILURE;
     if ( !mInitDone ) 
@@ -170,13 +170,13 @@ int PGMReceiver::connect()
         do {
             struct timeval tv;
             DWORD dwTimeout, dwEvents;
-			char* buffer = new char[ PGM_BUFFER_SIZE ];
+			char* buffer = new char[ OPENPGM_BUFFER_SIZE ];
             size_t len;
             struct pgm_sockaddr_t from;
             socklen_t fromlen = sizeof (from);
             const int status = pgm_recvfrom (mSock,
                 buffer,
-                PGM_BUFFER_SIZE,
+                OPENPGM_BUFFER_SIZE,
                 0,
                 &len,
                 &from,
@@ -265,7 +265,7 @@ int PGMReceiver::connect()
     return retval;
 }
 
-int PGMReceiver::shutdown()
+int OpenPGMReceiver::shutdown()
 {
     puts ("Message loop terminated, cleaning up.");
 
@@ -288,7 +288,7 @@ int PGMReceiver::shutdown()
 }
 
 // take the complete option string, analyse if the user input option is valid
-int PGMReceiver::analyseOptions( string& options )
+int OpenPGMReceiver::analyseOptions( string& options )
 {
     const string supportedOptions("snpcfKNlih?q");
     int retval = PGM_FAILURE;
@@ -296,7 +296,7 @@ int PGMReceiver::analyseOptions( string& options )
     {
         map< char, string > optionPairs;
 
-        retval = PGMUtils::intoOptions( options, optionPairs );
+        retval = OpenPGMUtils::intoOptions( options, optionPairs );
         if ( retval != PGM_SUCCESS )
         {
             break;
@@ -365,7 +365,7 @@ int PGMReceiver::analyseOptions( string& options )
     return retval;
 }
 
-int PGMReceiver::verifyOptions( std::map< char, std::string >& options )
+int OpenPGMReceiver::verifyOptions( std::map< char, std::string >& options )
 {
     int retval = PGM_FAILURE;
     if (mUseFec && ( !mRsN || !mRsK )) {
@@ -379,7 +379,7 @@ int PGMReceiver::verifyOptions( std::map< char, std::string >& options )
     return retval;
 }
 
-BOOL PGMReceiver::on_console_ctrl( DWORD dwCtrlType )
+BOOL OpenPGMReceiver::on_console_ctrl( DWORD dwCtrlType )
 {
     printf ("on_console_ctrl (dwCtrlType:%lu)\n", (unsigned long)dwCtrlType);
     sIsTerminated = TRUE;
@@ -387,7 +387,7 @@ BOOL PGMReceiver::on_console_ctrl( DWORD dwCtrlType )
     return TRUE;
 }
 
-int PGMReceiver::onStartup()
+int OpenPGMReceiver::onStartup()
 {
     struct pgm_addrinfo_t* res = NULL;
     pgm_error_t* pgm_err = NULL;
@@ -533,7 +533,7 @@ err_abort:
     return PGM_FATAL;
 }
 
-int PGMReceiver::onData( const void* restrict data, const size_t len, const struct pgm_sockaddr_t* restrict from )
+int OpenPGMReceiver::onData( const void* restrict data, const size_t len, const struct pgm_sockaddr_t* restrict from )
 {
     /* protect against non-null terminated strings */
 //     fprintf(stderr, "data received, size: %d\n", len);

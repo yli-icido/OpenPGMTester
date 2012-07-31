@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "PGMUtils.h"
+#include "OpenPGMUtils.h"
 
 using namespace std;
 // break input string into tokens according to the separator
@@ -7,7 +7,7 @@ using namespace std;
 //          separator
 //          isSeparatorLeading: true - separator is at the beginning, or false - separator is at the end
 //          tokens
-int PGMUtils::intoTokens( std::string& inputString, std::string& separator, bool isSeparatorLeading, std::vector< std::string >& tokens )
+int OpenPGMUtils::intoTokens( std::string& inputString, std::string& separator, bool isSeparatorLeading, std::vector< std::string >& tokens )
 {
     int retval = PGM_FAILURE;
     size_t pos1 = inputString.find( separator );
@@ -51,7 +51,7 @@ int PGMUtils::intoTokens( std::string& inputString, std::string& separator, bool
     return retval;
 }
 
-int PGMUtils::trim( std::string& aString )
+int OpenPGMUtils::trim( std::string& aString )
 {
     int retval = PGM_FAILURE;
     size_t begin = aString.find_first_not_of( " \"" );
@@ -67,7 +67,7 @@ int PGMUtils::trim( std::string& aString )
 
 
 // break the whole option string into option pairs, each option pair contains an option switch and its value (if any)
-int PGMUtils::intoOptions( string& options, map< char, string >& optionPairs )
+int OpenPGMUtils::intoOptions( string& options, map< char, string >& optionPairs )
 {
     int retval = PGM_FAILURE;
     size_t pos1 = options.find( "-" );
