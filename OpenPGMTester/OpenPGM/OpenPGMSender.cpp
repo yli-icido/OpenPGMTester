@@ -203,7 +203,7 @@ int OpenPGMSender::send()
                 iSizeSend += readResult;
                 if (PGM_IO_STATUS_NORMAL != status) 
                 {
-                    fprintf (stderr, "pgm_send() failed.\n");
+                    fprintf ( stderr, "pgm_send() failed, status=%d\n", status );
                 }
                 else if ( iSizeSend >= iSizeToPause )
                 {
@@ -289,7 +289,7 @@ int OpenPGMSender::createSocket()
     /* create global session identifier */
     struct pgm_sockaddr_t addr;
     memset (&addr, 0, sizeof(addr));
-    addr.sa_port = mPort ? mPort : DEFAULT_DATA_DESTINATION_PORT;
+    addr.sa_port = mPort ? mPort : OPENPGM_DATA_DESTINATION_PORT;
     addr.sa_addr.sport = DEFAULT_DATA_SOURCE_PORT;
     if (!pgm_gsi_create_from_hostname (&addr.sa_addr.gsi, &pgm_err)) {
         fprintf (stderr, "Creating GSI: %s\n", pgm_err->message);

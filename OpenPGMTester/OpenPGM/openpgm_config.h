@@ -6,7 +6,7 @@ const int OPENPGM_BUFFER_SIZE = 1024;
 const std::string OPENPGM_MULTICAST_ADDRESS = ";234.5.6.7";
 const int OPENPGM_DATA_DESTINATION_PORT = 5150;
 const bool OPENPGM_USE_UDP_ENCAP_PORT = false;
-const int OPENPGM_MAX_RTE = 400 * 1000; /* very conservative rate, 2.5mb/s */
+const int OPENPGM_MAX_RTE = 40 * 1000 * 1000; /* very conservative rate, 2.5mb/s */
 // const int RS_K = 0;         // for simple sender
 // const int RS_N = 0;         // for simple sender
 const int OPENPGM_RS_K = 8;      // for reliable sender
@@ -25,7 +25,7 @@ const int OPENPGM_MAX_ODATA_RTE = 1*1000*1000; // mbits
 
 // sender only
 const int OPENPGM_SEND_ONLY = 1;
-const int OPENPGM_SENDER_NON_BLOCKING = 0;
+const int OPENPGM_SENDER_NON_BLOCKING = 1;
 const int OPENPGM_AMBIENT_SPM = pgm_secs(30);
 const bool OPENPGM_USE_PGMCC = false;
 const bool OPENPGM_USE_FEC = false;

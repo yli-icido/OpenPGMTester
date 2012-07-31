@@ -307,7 +307,7 @@ int OpenPGMReliableSender::send()
                 status = pgm_send (mSock, buffer, readResult, NULL);
                 if (PGM_IO_STATUS_NORMAL != status) 
                 {
-                    fprintf (stderr, "pgm_send() failed.\n");
+                    fprintf ( stderr, "pgm_send() failed, status=%d\n", status );
                 }
                 //                 Sleep( 500 );
             }
