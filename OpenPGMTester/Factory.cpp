@@ -7,41 +7,34 @@
 
 #include "Factory.h"
 
-using namespace std;
 
-Sender* Factory::createSender( std::string& senderToCreate )
+Sender* Factory::createSender( char* senderToCreate )
 {
-    if ( senderToCreate == SENDER_TYPES[0] )
+    int senderType = atoi( senderToCreate );
+    switch ( senderType )
     {
+    case SIMPLE_OPEN_PGM_SENDER:
         return new OpenPGMSender();
-    }
-    else if ( senderToCreate == SENDER_TYPES[1] )
-    {
+    case RELIABLE_OPEN_PGM_SENDER:
         return new OpenPGMReliableSender();
-    }
-    else if ( senderToCreate == SENDER_TYPES[2] )
-    {
+    case MS_PGM_SENDER:
         return new MSPGMSender();
-    }
-    else 
-    {
+    default:
         fprintf( stderr, "Error no match sender to create\n");
         return NULL;
     }
 }
 
-Receiver* Factory::createReceiver( std::string& receiverToCreate )
+Receiver* Factory::createReceiver( char* receiverToCreate )
 {
-    if ( receiverToCreate == RECEIVER_TYPES[0] )
+    int receiverType = atoi( receiverToCreate );
+    switch ( receiverType )
     {
+    case OPEN_PGM_RECEIVER:
         return new OpenPGMReceiver();
-    }
-    else if ( receiverToCreate == RECEIVER_TYPES[1] )
-    {
+    case MS_PGM_RECEIVER:
         return new MSPGMReceiver();
-    }
-    else 
-    {
+    default:
         fprintf( stderr, "Error no match sender to create\n");
         return NULL;
     }

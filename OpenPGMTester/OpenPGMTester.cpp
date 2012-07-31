@@ -28,15 +28,14 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                fprintf (stderr, "which sender to create? \n");
-                for ( int i = 0; i < SENDER_TYPES_NUM; i++ )
+                fprintf (stderr, "enter the number for the sender to create? \n");
+                for ( int i = 0; i < SENDER_TYPES_CNT; i++ )
                 {
-                    fprintf ( stderr, "%s \n", SENDER_TYPES[i].c_str() );
+                    fprintf ( stderr, "%d: %s\n", SENDER_TYPE_NAMES[i].c_str() );
                 }
                 gets( userInputc );
-                string inputString( userInputc );
 
-                Sender* sender = Factory::createSender( inputString );
+                Sender* sender = Factory::createSender( userInputc );
                 if ( sender == NULL ) break;
 
                 if ( sender->init() != PGM_SUCCESS ) 
@@ -57,14 +56,13 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                fprintf (stderr, "which receiver to create? \n");
-                for ( int i = 0; i < RECEIVER_TYPES_NUM; i++ )
+                fprintf (stderr, "enter the number for the receiver to create? \n");
+                for ( int i = 0; i < RECEIVER_TYPES_CNT; i++ )
                 {
-                    fprintf ( stderr, "%s \n", RECEIVER_TYPES[i].c_str() );
+                    fprintf ( stderr, "%d: %s\n", RECEIVER_TYPE_NAMES[i].c_str() );
                 }
                 gets( userInputc );
-                string inputString( userInputc );
-                Receiver* receiver = Factory::createReceiver( inputString );
+                Receiver* receiver = Factory::createReceiver( userInputc );
                 if ( receiver == NULL ) break;
 
                 if ( receiver->init() != PGM_SUCCESS )
