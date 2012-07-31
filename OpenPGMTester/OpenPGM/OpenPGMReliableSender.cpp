@@ -22,6 +22,7 @@ unsigned __stdcall nak_routine( void* arg )
     Nak_Routine_Param* param = ( Nak_Routine_Param* )arg;
     pgm_sock_t* nak_sock = param->sock;
     OpenPGMReliableSender* sender = param->sender;
+    delete param;
 #ifndef _WIN32
     int fds;
     fd_set readfds;
@@ -476,8 +477,10 @@ int OpenPGMReliableSender::createNakThread()
     do 
     {
         /* expect warning on MinGW due to lack of native uintptr_t */
-        
-        mNakThread = (HANDLE)_beginthreadex (NULL, 0, &nak_routine, mSock, 0, NULL);
+        Nak_Routine_Param* param = new Nak_Routine_Param();
+        param->sock = mSock;
+        param->sender = this;
+        mNakThread = (HANDLE)_beginthreadex (NULL, 0, &nak_routine, param, 0, NULL);
         const int save_errno = errno;
         if (0 == mNakThread)
         {
