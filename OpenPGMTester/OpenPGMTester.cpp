@@ -31,7 +31,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                 fprintf (stderr, "enter the number for the sender to create? \n");
                 for ( int i = 0; i < SENDER_TYPES_CNT; i++ )
                 {
-                    fprintf ( stderr, "%d: %s\n", SENDER_TYPE_NAMES[i].c_str() );
+                    fprintf ( stderr, "%d: %s\n", i, SENDER_TYPE_NAMES[i].c_str() );
                 }
                 gets( userInputc );
 
@@ -59,7 +59,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                 fprintf (stderr, "enter the number for the receiver to create? \n");
                 for ( int i = 0; i < RECEIVER_TYPES_CNT; i++ )
                 {
-                    fprintf ( stderr, "%d: %s\n", RECEIVER_TYPE_NAMES[i].c_str() );
+                    fprintf ( stderr, "%d: %s\n", i, RECEIVER_TYPE_NAMES[i].c_str() );
                 }
                 gets( userInputc );
                 Receiver* receiver = Factory::createReceiver( userInputc );
