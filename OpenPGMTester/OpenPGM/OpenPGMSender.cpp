@@ -148,7 +148,7 @@ int OpenPGMSender::send()
             break;
         }
         vector< string > filenames;
-        filenames.push_back( "C:\\7zip_9.28.0.0.exe" );
+        filenames.push_back( "7z920-x64.msi" );
 //         string separator(";");
 //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
 //         if ( retval != PGM_SUCCESS )

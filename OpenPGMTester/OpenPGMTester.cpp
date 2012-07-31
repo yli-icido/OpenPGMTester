@@ -3,11 +3,9 @@
 
 #include "stdafx.h"
 #include "pgm/pgm.h"
-#include "OpenPGMReceiver.h"
-#include "OpenPGMSender.h"
-#include "MSPGMReceiver.h"
-#include "MSPGMSender.h"
-#include "OpenPGMReliableSender.h"
+#include "Sender.h"
+#include "Receiver.h"
+#include "Factory.h"
 
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
@@ -30,7 +28,15 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                Sender* sender = new OpenPGMReliableSender();
+                fprintf (stderr, "which sender to create? \n");
+                for ( int i = 0; i < SENDER_TYPES_NUM; i++ )
+                {
+                    fprintf ( stderr, "%s \n", SENDER_TYPES[i].c_str() );
+                }
+                gets( userInputc );
+                string inputString( userInputc );
+
+                Sender* sender = Factory::createSender( inputString );
                 if ( sender == NULL ) break;
 
                 if ( sender->init() != PGM_SUCCESS ) 
@@ -51,7 +57,14 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                Receiver* receiver = new OpenPGMReceiver();
+                fprintf (stderr, "which receiver to create? \n");
+                for ( int i = 0; i < RECEIVER_TYPES_NUM; i++ )
+                {
+                    fprintf ( stderr, "%s \n", RECEIVER_TYPES[i].c_str() );
+                }
+                gets( userInputc );
+                string inputString( userInputc );
+                Receiver* receiver = Factory::createReceiver( inputString );
                 if ( receiver == NULL ) break;
 
                 if ( receiver->init() != PGM_SUCCESS )

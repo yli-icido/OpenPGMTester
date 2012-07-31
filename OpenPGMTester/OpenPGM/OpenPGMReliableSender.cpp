@@ -255,7 +255,7 @@ int OpenPGMReliableSender::send()
             break;
         }
         vector< string > filenames;
-        filenames.push_back( "C:\\Users\\yli\\Downloads\\mouse.sso" );
+        filenames.push_back( "7z920-x64.msi" );
         //         string separator(";");
         //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
         //         if ( retval != PGM_SUCCESS )
