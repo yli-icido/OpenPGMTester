@@ -1,17 +1,17 @@
 #ifndef PMGRECEIVER_H_
 #define PMGRECEIVER_H_
 
+#include "Receiver.h"
 
-class PGMReceiver
+class PGMReceiver : public Receiver
 {
 public:
     PGMReceiver();
-    ~PGMReceiver();
+    virtual ~PGMReceiver();
 
-    int     init();
-    int     connect();
-    int     receive();
-    int     shutdown();
+    virtual int     init();
+    virtual int     connect();
+    virtual int     shutdown();
     static BOOL    on_console_ctrl( DWORD dwCtrlType );
 
 private:

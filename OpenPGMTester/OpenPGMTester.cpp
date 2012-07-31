@@ -27,7 +27,7 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                PGMSender* sender = new PGMSender();
+                Sender* sender = new PGMSender();
                 if ( sender == NULL ) break;
 
                 if ( sender->init() != PGM_SUCCESS ) 
@@ -39,6 +39,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                 if ( sender->send() != PGM_SUCCESS )
                     break;
 
+                delete sender;
                 retval = EXIT_SUCCESS;
 
             } while ( false );
@@ -47,7 +48,7 @@ int _tmain( int argc, _TCHAR* argv[] )
         {
             do 
             {
-                PGMReceiver* receiver = new PGMReceiver();
+                Receiver* receiver = new PGMReceiver();
                 if ( receiver == NULL ) break;
 
                 if ( receiver->init() != PGM_SUCCESS )
@@ -59,6 +60,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                 if ( receiver->shutdown() != PGM_SUCCESS )
                     break;
 
+                delete receiver;
                 retval = EXIT_SUCCESS;
 
             } while ( false );

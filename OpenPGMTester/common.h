@@ -10,9 +10,11 @@ const int PGM_INVALID_PARAMS = 2;
 const int PGM_BUFFER_SIZE = 1024;
 const std::string PGM_MULTICAST_ADDRESS = ";224.0.12.136";
 const bool USE_UDP_ENCAP_PORT = false;
-const int MAX_RTE = 0;
-const int RS_K = 0;
-const int RS_N = 0;
+const int MAX_RTE = 400 * 1000; /* very conservative rate, 2.5mb/s */
+// const int RS_K = 0;         // for simple sender
+// const int RS_N = 0;         // for simple sender
+const int RS_K = 8;      // for reliable sender
+const int RS_N = 255;    // for reliable sender
 const int MAX_TPDU = 1500;
 const int SQNS = 5* 1000 * 1000;
 const int USE_MULTICAST_LOOP = 0;
@@ -29,6 +31,11 @@ const int MAX_ODATA_RTE = 1*1000*1000; // mbits
 const int SEND_ONLY = 1;
 const int SENDER_NON_BLOCKING = 0;
 const int AMBIENT_SPM = pgm_secs(30);
+const bool USE_PGMCC = false;
+const bool USE_FEC = false;
+
+const bool USE_ONDEMAND_PARITY = FALSE;
+const int PROACTIVE_PACKETS = 0;
 
 // receiver only 
 const int RECEIVE_ONLY = 1;
