@@ -26,6 +26,7 @@ int _tmain( int argc, _TCHAR* argv[] )
 
         if ( strcmp( userInputc, "send" ) == 0 ) // send
         {
+            Sender* sender = NULL;
             do 
             {
                 fprintf (stderr, "enter the number for the sender to create? \n");
@@ -35,7 +36,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                 }
                 gets( userInputc );
 
-                Sender* sender = Factory::createSender( userInputc );
+                sender = Factory::createSender( userInputc );
                 if ( sender == NULL ) break;
 
                 if ( sender->init() != PGM_SUCCESS ) 
@@ -47,13 +48,14 @@ int _tmain( int argc, _TCHAR* argv[] )
                 if ( sender->send() != PGM_SUCCESS )
                     break;
 
-                delete sender;
                 retval = EXIT_SUCCESS;
 
             } while ( false );
+            delete sender;
         }
         else if ( strcmp( userInputc, "receive" ) == 0 ) // receive
         {
+            Receiver* receiver = NULL;
             do 
             {
                 fprintf (stderr, "enter the number for the receiver to create? \n");
@@ -62,7 +64,7 @@ int _tmain( int argc, _TCHAR* argv[] )
                     fprintf ( stderr, "%d: %s\n", i, RECEIVER_TYPE_NAMES[i].c_str() );
                 }
                 gets( userInputc );
-                Receiver* receiver = Factory::createReceiver( userInputc );
+                receiver = Factory::createReceiver( userInputc );
                 if ( receiver == NULL ) break;
 
                 if ( receiver->init() != PGM_SUCCESS )
@@ -71,14 +73,14 @@ int _tmain( int argc, _TCHAR* argv[] )
                 if ( receiver->connect() != PGM_SUCCESS )
                     break;
 
-                if ( receiver->shutdown() != PGM_SUCCESS )
+                if ( receiver->receive() != PGM_SUCCESS )
                     break;
 
-                delete receiver;
                 retval = EXIT_SUCCESS;
 
             } while ( false );
-        }
+            delete receiver;
+       }
         else if ( strcmp( userInputc, "exit" ) == 0 )
         {
             retval = EXIT_SUCCESS;

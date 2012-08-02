@@ -12,6 +12,7 @@ public:
 
     virtual int     init();
     virtual int     connect();
+    virtual int     receive() { return PGM_SUCCESS; }
     virtual int     shutdown();
     static BOOL    on_console_ctrl( DWORD dwCtrlType );
 

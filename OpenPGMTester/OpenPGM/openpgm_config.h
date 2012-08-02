@@ -1,6 +1,7 @@
 #ifndef OPENPGM_CONFIG_H_
 #define OPENPGM_CONFIG_H_
 
+#include "pgm/pgm.h"
 // both
 const int OPENPGM_BUFFER_SIZE = 1024;
 const std::string OPENPGM_MULTICAST_ADDRESS = ";234.5.6.7";

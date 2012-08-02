@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="./;../include;./OpenPGM;./MSPGM"
+				AdditionalIncludeDirectories="./;../include;./OpenPGM;./MSPGM;./TCP"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -283,6 +283,30 @@
 			</File>
 			<File
 				RelativePath=".\OpenPGM\OpenPGMUtils.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="TCP"
+			>
+			<File
+				RelativePath=".\TCP\TCPConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TCP\TCPReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TCP\TCPReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TCP\TCPSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\TCP\TCPSender.h"
 				>
 			</File>
 		</Filter>
