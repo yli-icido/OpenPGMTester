@@ -11,10 +11,8 @@ TCPSender::TCPSender() :
 mInitDone( false ),
 mIsConnected( false ),
 mIsToQuit( false ),
-mPort( TCP_PORT ),
 mSocket( NULL )
 {
-
 }
 
 TCPSender::~TCPSender()
@@ -27,7 +25,6 @@ int TCPSender::initVar()
     mInitDone = false;
     mIsConnected = false;
     mIsToQuit = false;
-    mPort = TCP_PORT;
     mSocket = NULL;
 
     return PGM_SUCCESS;
@@ -87,13 +84,15 @@ int TCPSender::connect()
             }
 
             // Resolve the server address and port
-            iResult = getaddrinfo(strUserInput.c_str(), mPort.c_str(), &hints, &result);
+            iResult = getaddrinfo(strUserInput.c_str(), TCP_PORT.c_str(), &hints, &result);
             if ( iResult != 0 )
             {
                 printf("getaddrinfo failed with error: %d\n", iResult);
                 printf("failed to connect re-enter the address to retry\n");
                 printf("    -q to quit\n");
             }
+            else if ( iResult == 0 )
+                break;
         } while ( !isToQuite ) ;
 
         if ( isToQuite ) break;

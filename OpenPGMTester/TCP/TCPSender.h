@@ -22,7 +22,6 @@ private:
     bool            mInitDone;
     bool            mIsConnected;
     bool            mIsToQuit;
-    std::string     mPort;
     SOCKET          mSocket;
 };
 #endif // TCP_SENDER_H_

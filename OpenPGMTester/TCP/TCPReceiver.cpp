@@ -8,10 +8,8 @@ TCPReceiver::TCPReceiver() :
 mInitDone( false ),
 mIsConnected( false ),
 mIsToQuit( false ), 
-mPort( TCP_PORT ),
 mClientSocket( INVALID_SOCKET )
 {
-//     mPort = TCP_PORT;
 }
 
 TCPReceiver::~TCPReceiver()
@@ -24,7 +22,6 @@ int TCPReceiver::initVar()
     mInitDone = false;
     mIsConnected = false;
     mIsToQuit = false;
-    mPort = TCP_PORT;
     mClientSocket = INVALID_SOCKET;
     return PGM_SUCCESS;
 }
@@ -61,7 +58,7 @@ int TCPReceiver::connect()
         hints.ai_flags = AI_PASSIVE;
 
         // Resolve the local address and port to be used by the server
-        retval = getaddrinfo(NULL, mPort.c_str(), &hints, &result);
+        retval = getaddrinfo(NULL, TCP_PORT.c_str(), &hints, &result);
         if (retval != 0) 
         {
             printf("getaddrinfo failed: %d\n", retval);
@@ -148,7 +145,7 @@ int TCPReceiver::receive()
             fprintf(stderr, "recv() failed: Error = %d\n", WSAGetLastError());
             isTerminated = true;
         }
-        else if ( strcmp( buffer, "start" ) == 0 )
+        else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buffer, "start", lBytesRead ) == 0 ))
         {
             printf ("start\n");
             if ( pFileToWrite != NULL )
@@ -161,13 +158,13 @@ int TCPReceiver::receive()
             pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
             rCounter++;
         }
-        else if ( strcmp( buffer, "end" ) == 0 )
+        else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buffer, "end", lBytesRead ) == 0 ))
         {
             printf("end\n");
             fclose( pFileToWrite );
             pFileToWrite = NULL;
         }
-        else if ( strcmp( buffer, "-q" ) == 0 )
+        else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buffer, "-q" ) == 0 ))
         {
             if ( pFileToWrite != NULL )
             {
