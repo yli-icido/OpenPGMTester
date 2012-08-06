@@ -11,7 +11,7 @@ mIsToQuit( false ),
 mPort( TCP_PORT ),
 mClientSocket( INVALID_SOCKET )
 {
-
+//     mPort = TCP_PORT;
 }
 
 TCPReceiver::~TCPReceiver()
@@ -77,16 +77,6 @@ int TCPReceiver::connect()
             freeaddrinfo(result);
             WSACleanup();
             break;
-        }
-
-        // Setup the TCP listening socket
-        retval = bind( listenSocket, result->ai_addr, (int)result->ai_addrlen);
-        if (retval == SOCKET_ERROR) {
-            printf("bind failed with error: %d\n", WSAGetLastError());
-            freeaddrinfo(result);
-            closesocket(listenSocket);
-            WSACleanup();
-            retval = PGM_FAILURE;
         }
 
         // bind a socket that has already been created to an IP address and port. Client applications use the IP address and port to connect to the host network.

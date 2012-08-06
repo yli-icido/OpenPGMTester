@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "OpenPGMReceiver.h"
 #include "OpenPGMSender.h"
+#include "OpenPGMReliableSender.h"
 #include "MSPGMReceiver.h"
 #include "MSPGMSender.h"
-#include "OpenPGMReliableSender.h"
 #include "TCPReceiver.h"
 #include "TCPSender.h"
 
