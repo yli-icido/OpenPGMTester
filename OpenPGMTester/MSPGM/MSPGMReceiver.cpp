@@ -299,25 +299,25 @@ int MSPGMReceiver::receive()
 {
     int retval = PGM_FATAL;
     bool isTerminated = false;
+    FILE* pFileToWrite = NULL;
+    char fileToWrite[11];
+    int rCounter = 0;
+    char cCounter[3];
+
+    LONG        lBytesRead;
+    char* buffer = new char[ MSPGM_BUFFER_SIZE ];
     do 
     {
-        FILE* pFileToWrite = NULL;
-        char fileToWrite[11];
-        int rCounter = 0;
-        char cCounter[3];
-
-        LONG        BytesRead;
-        char* buffer = new char[ MSPGM_BUFFER_SIZE ];
-        BytesRead = recv (mClientSocket, buffer, MSPGM_BUFFER_SIZE, 0);
-        if (BytesRead == 0)
+        lBytesRead = recv (mClientSocket, buffer, MSPGM_BUFFER_SIZE, 0);
+        if (lBytesRead == 0)
         {
             fprintf(stdout, "Session was terminated\n");
         }
-        else if (BytesRead == SOCKET_ERROR)
+        else if (lBytesRead == SOCKET_ERROR)
         {
             fprintf(stderr, "recv() failed: Error = %d\n", WSAGetLastError());
         }
-        else if ( strcmp( buffer, "start" ) == 0 )
+        else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buffer, "start", lBytesRead ) == 0 ))
         {
             printf ("start\n");
             if ( pFileToWrite != NULL )
@@ -330,13 +330,13 @@ int MSPGMReceiver::receive()
             pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
             rCounter++;
         }
-        else if ( strcmp( buffer, "end" ) == 0 )
+        else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buffer, "end", lBytesRead ) == 0 ))
         {
             printf("end\n");
             fclose( pFileToWrite );
             pFileToWrite = NULL;
         }
-        else if ( strcmp( buffer, "-q" ) == 0 )
+        else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buffer, "-q", lBytesRead ) == 0 ))
         {
             if ( pFileToWrite != NULL )
             {
@@ -347,7 +347,7 @@ int MSPGMReceiver::receive()
         }
         else if ( pFileToWrite != NULL )
         {
-            fwrite( buffer, 1, BytesRead, pFileToWrite );
+            fwrite( buffer, 1, lBytesRead, pFileToWrite );
         }
         else
         {

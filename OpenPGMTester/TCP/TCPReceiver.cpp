@@ -164,7 +164,7 @@ int TCPReceiver::receive()
             fclose( pFileToWrite );
             pFileToWrite = NULL;
         }
-        else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buffer, "-q" ) == 0 ))
+        else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buffer, "-q", lBytesRead ) == 0 ))
         {
             if ( pFileToWrite != NULL )
             {
