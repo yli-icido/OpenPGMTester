@@ -116,14 +116,17 @@ int AceMcastReceiver::receive()
             }
             else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buff, "start", lBytesRead ) == 0 ))
             {
+                fprintf( stdout, "start\n" );
                 lPackCounter = 0;
             }
             else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
             {
-                fprintf( stdout, "total pack count: %d", lPackCounter );
+                fprintf( stdout, "end\n" );
+                fprintf( stdout, "total pack received: %d", lPackCounter );
             }
             else
             {
+                lPackCounter++;
                 strncpy( pPack, buff, 10 );
                 fprintf( stdout, "pack no. %s\n", pPack );
             }
