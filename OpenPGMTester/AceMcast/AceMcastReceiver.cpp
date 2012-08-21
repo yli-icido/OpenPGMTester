@@ -94,14 +94,14 @@ int AceMcastReceiver::receive()
     char* buff = new char[ ACEMCAST_MESSAGE_LEN ];
     int lBytesRead = 0;
     bool isTerminated = false;
+    FILE* pFileToWrite = NULL;
+    char fileToWrite[11];
+    int rCounter = 0;
+    char cCounter[3];
+
     do 
     {
         if ( !mIsConnected ) break;
-
-        FILE* pFileToWrite = NULL;
-        char fileToWrite[11];
-        int rCounter = 0;
-        char cCounter[3];
 
         lBytesRead = mMcastSock.recv( buff, ACEMCAST_MESSAGE_LEN, addr );
         if (lBytesRead <= 0)

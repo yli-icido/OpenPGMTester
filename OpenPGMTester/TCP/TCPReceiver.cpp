@@ -125,17 +125,18 @@ int TCPReceiver::receive()
 {
     int retval = PGM_FATAL;
     bool isTerminated = false;
+    FILE* pFileToWrite = NULL;
+    char fileToWrite[11];
+    int rCounter = 0;
+    char cCounter[3];
+
+    LONG        lBytesRead;
+    char* buffer = new char[ TCP_BUFFER_SIZE ];
+
     do 
     {
         if ( !mIsConnected ) break;
 
-        FILE* pFileToWrite = NULL;
-        char fileToWrite[11];
-        int rCounter = 0;
-        char cCounter[3];
-
-        LONG        lBytesRead;
-        char* buffer = new char[ TCP_BUFFER_SIZE ];
         lBytesRead = recv (mClientSocket, buffer, TCP_BUFFER_SIZE, 0);
         if (lBytesRead == 0)
         {
