@@ -191,10 +191,11 @@ int AceMcastSender::send()
                         sizeToRead = completeSizeToSend - curPos;
                     }
                     curPos += sizeToRead;
-                    char cPackCounter[3];
+                    char cPackCounter[10];
                     _itoa( lPackCounter, cPackCounter, 10 );
+                    lPackCounter++;
 
-                    strcpy( buffer, strcat( "acemcast_sent", cPackCounter) );
+                    strcpy( buffer, cPackCounter );
                     error = mMcastSock.send( buffer, sizeToRead );
                     if (error == -1)
                     {
@@ -207,6 +208,7 @@ int AceMcastSender::send()
         }
         // send a "end" to indicate transfer session end
         error = mMcastSock.send( "end", strlen("end") );
+        fprintf (stderr, "total pack count: %d\n", lPackCounter );
         fclose( pFileToWrite );
 
     } while ( false );

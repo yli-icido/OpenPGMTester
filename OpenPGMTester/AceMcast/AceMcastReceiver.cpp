@@ -100,6 +100,7 @@ int AceMcastReceiver::receive()
     char cCounter[3];
     bool bWriteToFile = false;
     char pPack[50];
+    long lPackCounter = 0;
 
     do 
     {
@@ -108,10 +109,23 @@ int AceMcastReceiver::receive()
         lBytesRead = mMcastSock.recv( buff, ACEMCAST_MESSAGE_LEN, addr );
         if ( !bWriteToFile )
         {
-            if ( lBytesRead > 0 )
+            if ( lBytesRead <= 0 )
             {
-                strncpy( pPack, buff, 20 );
-                fprintf( stdout, "pack no. %s", pPack );
+                fprintf(stdout, "connection closing...\n");
+                isTerminated = true;
+            }
+            else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buff, "start", lBytesRead ) == 0 ))
+            {
+                lPackCounter = 0;
+            }
+            else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
+            {
+                fprintf( stdout, "total pack count: %d", lPackCounter );
+            }
+            else
+            {
+                strncpy( pPack, buff, 10 );
+                fprintf( stdout, "pack no. %s\n", pPack );
             }
         }
         else 
