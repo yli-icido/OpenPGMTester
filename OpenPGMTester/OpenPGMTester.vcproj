@@ -61,7 +61,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libpgm.lib"
+				AdditionalDependencies="libpgm.lib ACEd.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../lib"
 				GenerateDebugInformation="true"
@@ -307,6 +307,30 @@
 			</File>
 			<File
 				RelativePath=".\TCP\TCPSender.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="AceMcast"
+			>
+			<File
+				RelativePath=".\AceMcast\AceMcastConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AceMcast\AceMcastReceiver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AceMcast\AceMcastReceiver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AceMcast\AceMcastSender.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\AceMcast\AceMcastSender.h"
 				>
 			</File>
 		</Filter>

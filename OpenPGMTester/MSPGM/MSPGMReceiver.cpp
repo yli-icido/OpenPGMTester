@@ -3,6 +3,9 @@
 #include "MSPGMReceiver.h"
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
+#pragma warning ( disable: 4018 )
+#pragma message (__FILE__ ": warning 4018 has been disableed" )
+
 #define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
 #define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
 using namespace std;

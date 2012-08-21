@@ -3,6 +3,8 @@
 
 #pragma message (__FILE__ ": warning 4996 has been disableed" )
 #pragma warning ( disable: 4996 )
+#pragma warning ( disable: 4018 )
+#pragma message (__FILE__ ": warning 4018 has been disableed" )
 
 TCPReceiver::TCPReceiver() : 
 mInitDone( false ),
