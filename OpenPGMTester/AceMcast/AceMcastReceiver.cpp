@@ -98,52 +98,65 @@ int AceMcastReceiver::receive()
     char fileToWrite[11];
     int rCounter = 0;
     char cCounter[3];
+    bool bWriteToFile = false;
+    char pPack[50];
 
     do 
     {
         if ( !mIsConnected ) break;
 
         lBytesRead = mMcastSock.recv( buff, ACEMCAST_MESSAGE_LEN, addr );
-        if (lBytesRead <= 0)
+        if ( !bWriteToFile )
         {
-            fprintf(stdout, "connection closing...\n");
-            isTerminated = true;
-        }
-        else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buff, "start", lBytesRead ) == 0 ))
-        {
-            printf ("start\n");
-            if ( pFileToWrite != NULL )
+            if ( lBytesRead > 0 )
             {
+                strncpy( pPack, buff, 20 );
+                fprintf( stdout, "pack no. %s", pPack );
+            }
+        }
+        else 
+        {
+            if (lBytesRead <= 0)
+            {
+                fprintf(stdout, "connection closing...\n");
+                isTerminated = true;
+            }
+            else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buff, "start", lBytesRead ) == 0 ))
+            {
+                printf ("start\n");
+                if ( pFileToWrite != NULL )
+                {
+                    fclose( pFileToWrite );
+                    pFileToWrite = NULL;
+                }
+                strcpy( fileToWrite, "acemcast_received" );
+                _itoa( rCounter, cCounter, 10 );
+                pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
+                rCounter++;
+            }
+            else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
+            {
+                printf("end\n");
                 fclose( pFileToWrite );
                 pFileToWrite = NULL;
             }
-            strcpy( fileToWrite, "acemcast_received" );
-            _itoa( rCounter, cCounter, 10 );
-            pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
-            rCounter++;
-        }
-        else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
-        {
-            printf("end\n");
-            fclose( pFileToWrite );
-            pFileToWrite = NULL;
-        }
-        else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buff, "-q", lBytesRead ) == 0 ))
-        {
-            if ( pFileToWrite != NULL )
+            else if (( lBytesRead <= strlen( "-q" ) ) &&  ( strncmp( buff, "-q", lBytesRead ) == 0 ))
             {
-                fclose( pFileToWrite );
-                pFileToWrite = NULL;
+                if ( pFileToWrite != NULL )
+                {
+                    fclose( pFileToWrite );
+                    pFileToWrite = NULL;
+                }
+                isTerminated = true;
             }
-            isTerminated = true;
-        }
-        else if ( pFileToWrite != NULL )
-        {
-            fwrite( buff, 1, lBytesRead, pFileToWrite );
-        }
-        else
-        {
-            fprintf(stderr, "output file not open\n");
+            else if ( pFileToWrite != NULL )
+            {
+                fwrite( buff, 1, lBytesRead, pFileToWrite );
+            }
+            else
+            {
+                fprintf(stderr, "output file not open\n");
+            }
         }
 
         rv = PGM_SUCCESS;

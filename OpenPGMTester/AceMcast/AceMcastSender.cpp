@@ -104,7 +104,10 @@ int AceMcastSender::send()
             break;
         }
         vector< string > filenames;
-        filenames.push_back( "7z920-x64.msi" );
+        if ( userInput.empty() )
+            filenames.push_back( "TortoiseGit-1.7.12.0-32bit.msi" );
+        else
+            filenames.push_back( userInput );
         //         string separator(";");
         //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
         //         if ( retval != PGM_SUCCESS )
@@ -114,11 +117,13 @@ int AceMcastSender::send()
         char* buffer = new char[ ACEMCAST_MESSAGE_LEN ];
         char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
-        char fileToWrite[10];
-        strcpy( fileToWrite, "sent" );
+        char fileToWrite[50];
+        strcpy( fileToWrite, "acemcast_sent" );
         FILE* pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
         sCounter++;
         LONG        error;
+        long lPackCounter = 0;
+
         // send a "start" indicate a transfer session started
         error = mMcastSock.send( "start", strlen( "start" ) );
         if ( error == -1 )
@@ -128,47 +133,77 @@ int AceMcastSender::send()
             break;
         }
 
+        bool bSendFile = false;
+
         for ( size_t i = 0; i < filenames.size(); i++ )
         {
-            pFileToSend = fopen( filenames[i].c_str(), "rb" );
-            if (pFileToSend == NULL) 
+            if ( bSendFile )
             {
-                cerr << "Error opening file: " << filenames[i] << endl;
-                continue;
+                pFileToSend = fopen( filenames[i].c_str(), "rb" );
+                if (pFileToSend == NULL) 
+                {
+                    cerr << "Error opening file: " << filenames[i] << endl;
+                    continue;
+                }
+                fseek( pFileToSend, 0, SEEK_END );
+                size_t fileSize = ftell( pFileToSend );
+                size_t curPos = 0;
+                size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
+                rewind( pFileToSend );
+                size_t readResult = 0;
+                while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
+                {
+                    if ( fileSize - curPos < ACEMCAST_MESSAGE_LEN )
+                    {
+                        sizeToRead = fileSize - curPos;
+                    }
+
+                    readResult = fread( buffer, 1, sizeToRead, pFileToSend );
+                    if ( readResult != sizeToRead )
+                    {
+                        cerr << "error reading file at: " << ftell(pFileToSend) << endl;
+                        cerr << "sizeToRead:" << sizeToRead << ", actual read:" << readResult << endl;
+                        cerr << "error code: " << ferror( pFileToSend ) << ", eof:" << feof( pFileToSend) << endl;
+                    }
+                    curPos += readResult;
+                    error = mMcastSock.send( buffer, sizeToRead );
+                    if (error == -1)
+                    {
+                        fprintf (stderr, "send() failed: Error = %d\n", error );
+                        retval = PGM_FATAL;
+                        break;
+                    }
+
+                    fwrite( buffer, 1, readResult, pFileToWrite );
+                }
+                fclose( pFileToSend );
+                pFileToSend = NULL;
             }
-            fseek( pFileToSend, 0, SEEK_END );
-            size_t fileSize = ftell( pFileToSend );
-            size_t curPos = 0;
-            size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
-            rewind( pFileToSend );
-            size_t readResult = 0;
-            while ( !feof( pFileToSend ) && ( curPos < fileSize ) )
+            else 
             {
-                if ( fileSize - curPos < ACEMCAST_MESSAGE_LEN )
+                size_t completeSizeToSend = 100 * 1024 * 1024;
+                size_t curPos = 0;
+                size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
+                while ( curPos < completeSizeToSend )
                 {
-                    sizeToRead = fileSize - curPos;
-                }
+                    if ( completeSizeToSend - curPos < ACEMCAST_MESSAGE_LEN )
+                    {
+                        sizeToRead = completeSizeToSend - curPos;
+                    }
+                    curPos += sizeToRead;
+                    char cPackCounter[3];
+                    _itoa( lPackCounter, cPackCounter, 10 );
 
-                readResult = fread( buffer, 1, sizeToRead, pFileToSend );
-                if ( readResult != sizeToRead )
-                {
-                    cerr << "error reading file at: " << ftell(pFileToSend) << endl;
-                    cerr << "sizeToRead:" << sizeToRead << ", actual read:" << readResult << endl;
-                    cerr << "error code: " << ferror( pFileToSend ) << ", eof:" << feof( pFileToSend) << endl;
+                    strcpy( buffer, strcat( "acemcast_sent", cPackCounter) );
+                    error = mMcastSock.send( buffer, sizeToRead );
+                    if (error == -1)
+                    {
+                        fprintf (stderr, "send() failed: Error = %d\n", error );
+                        retval = PGM_FATAL;
+                        break;
+                    }
                 }
-                curPos += readResult;
-                error = mMcastSock.send( buffer, sizeToRead );
-                if (error == -1)
-                {
-                    fprintf (stderr, "send() failed: Error = %d\n", error );
-                    retval = PGM_FATAL;
-                    break;
-                }
-
-                fwrite( buffer, 1, readResult, pFileToWrite );
             }
-            fclose( pFileToSend );
-            pFileToSend = NULL;
         }
         // send a "end" to indicate transfer session end
         error = mMcastSock.send( "end", strlen("end") );
