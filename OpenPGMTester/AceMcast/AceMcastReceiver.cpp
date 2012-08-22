@@ -101,6 +101,8 @@ int AceMcastReceiver::receive()
     bool bWriteToFile = false;
     char pPack[50];
     long lPackCounter = 0;
+    vector< string > receivedPacks;
+    string receivedPack;
 
     do 
     {
@@ -117,18 +119,52 @@ int AceMcastReceiver::receive()
             else if (( lBytesRead <= strlen( "start" ) ) && ( strncmp( buff, "start", lBytesRead ) == 0 ))
             {
                 fprintf( stdout, "start\n" );
-                lPackCounter = 0;
+                if ( lPackCounter != 0 )
+                {
+                    int curPack, nextPack;
+                    for ( size_t i = 0; i < receivedPacks.size() ; i++ )
+                    {
+                        curPack = atoi( receivedPacks[i].c_str() );
+                        if ( i + 1 < receivedPacks.size() )
+                        {                        
+                            nextPack = atoi( receivedPacks[i + 1] );
+                            if ( nextPack != curPack + 1 )
+                            {
+                                fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
+                            }
+                        }
+                    }
+                    lPackCounter = 0;
+                    receivedPacks.clear();
+                }
             }
             else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
             {
                 fprintf( stdout, "end\n" );
                 fprintf( stdout, "total pack received: %d", lPackCounter );
+                int curPack, nextPack;
+                for ( size_t i = 0; i < receivedPacks.size() ; i++ )
+                {
+                    curPack = atoi( receivedPack[i].c_str() );
+                    if ( i + 1 < receivedPacks.size() )
+                    {                        
+                        nextPack = atoi( receivedPack[i + 1] );
+                        if ( nextPack != curPack + 1 )
+                        {
+                            fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
+                        }
+                    }
+                }
+                lPackCounter = 0;
+                receivedPacks.clear();
             }
             else
             {
                 lPackCounter++;
-                strncpy( pPack, buff, 10 );
-                fprintf( stdout, "pack no. %s\n", pPack );
+                receivedPack = buff;
+                receivedPacks.push_back( receivedPack );
+//                 strncpy( pPack, buff, 10 );
+//                 fprintf( stdout, "pack no. %s\n", pPack );
             }
         }
         else 
