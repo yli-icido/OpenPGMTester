@@ -136,6 +136,7 @@ int AceMcastReceiver::receive()
                             }
                         }
                     }
+                    fprintf( stdout, "total pack received: %d", lPackCounter );
                     fprintf( stdout, "total missing packs: %d\n", count );
                     lPackCounter = 0;
                     receivedPacks.clear();
@@ -144,7 +145,6 @@ int AceMcastReceiver::receive()
             else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
             {
                 fprintf( stdout, "end\n" );
-                fprintf( stdout, "total pack received: %d", lPackCounter );
                 int curPack, nextPack;
                 int count = 0;
                 for ( size_t i = 0; i < receivedPacks.size() ; i++ )
@@ -160,6 +160,7 @@ int AceMcastReceiver::receive()
                         }
                     }
                 }
+                fprintf( stdout, "total pack received: %d", lPackCounter );
                 fprintf( stdout, "total missing packs: %d\n", count );
                 lPackCounter = 0;
                 receivedPacks.clear();
