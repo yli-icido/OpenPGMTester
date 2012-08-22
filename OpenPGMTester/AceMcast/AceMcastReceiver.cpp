@@ -2,7 +2,7 @@
 #include "AceMcastReceiver.h"
 #include <iostream>
 #include <string>
-
+#include <algorithm>
 #pragma warning ( disable: 4018 )
 #pragma message (__FILE__ ": warning 4018 has been disableed" )
 
@@ -151,14 +151,29 @@ int AceMcastReceiver::receive()
             {
                 elapsedTime = GetTickCount() - timeTick - ACEMCAST_DELAY_BEFORE_END;
                 fprintf( stdout, "end\n" );
-                int curPack, nextPack;
                 int count = 0;
-                for ( size_t i = 0; i < receivedPacks.size() ; i++ )
+                int incorrectOrdered = 0;
+                int curPack = 0;
+                int nextPack = atoi( receivedPacks[0].c_str() );
+                vector<int> receivedNum;
+                receivedNum.push_back( nextPack );
+                for ( size_t i = 1; i < receivedPacks.size(); i++ )
                 {
-                    curPack = atoi( receivedPacks[i].c_str() );
-                    if ( i + 1 < receivedPacks.size() )
+                    curPack = nextPack;
+                    nextPack = atoi( receivedPacks[i].c_str() );
+                    receivedNum.push_back( nextPack );
+                    if ( curPack > nextPack )
+                        incorrectOrdered++;
+                }
+
+                sort(receivedNum.begin(), receivedNum.end());
+
+                for ( size_t i = 0; i < receivedNum.size() ; i++ )
+                {
+                    curPack = receivedNum[i];
+                    if ( i + 1 < receivedNum.size() )
                     {                        
-                        nextPack = atoi( receivedPacks[i + 1].c_str() );
+                        nextPack = receivedNum[i + 1];
                         if ( nextPack != curPack + 1 )
                         {
                             count += nextPack - curPack - 1;
