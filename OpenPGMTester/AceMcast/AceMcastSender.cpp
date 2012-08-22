@@ -91,6 +91,8 @@ int AceMcastSender::send()
     int retval = PGM_FAILURE;
     string userInput;
     int sCounter = 0;
+    char cCounter[3];
+    char fileToWrite[50];
     do 
     {
         // expect a file name
@@ -115,9 +117,7 @@ int AceMcastSender::send()
 
         FILE* pFileToSend = NULL;
         char* buffer = new char[ ACEMCAST_MESSAGE_LEN ];
-        char cCounter[3];
         _itoa( sCounter, cCounter, 10 );
-        char fileToWrite[50];
         strcpy( fileToWrite, "acemcast_sent" );
         FILE* pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
         sCounter++;
@@ -211,7 +211,7 @@ int AceMcastSender::send()
         fprintf (stderr, "total pack count: %d\n", lPackCounter );
         fclose( pFileToWrite );
 
-    } while ( false );
+    } while ( true );
 
     return retval;
 }

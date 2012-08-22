@@ -122,6 +122,7 @@ int AceMcastReceiver::receive()
                 if ( lPackCounter != 0 )
                 {
                     int curPack, nextPack;
+                    int count = 0;
                     for ( size_t i = 0; i < receivedPacks.size() ; i++ )
                     {
                         curPack = atoi( receivedPacks[i].c_str() );
@@ -130,10 +131,12 @@ int AceMcastReceiver::receive()
                             nextPack = atoi( receivedPacks[i + 1].c_str() );
                             if ( nextPack != curPack + 1 )
                             {
+                                count += nextPack - curPack - 1;
                                 fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
                             }
                         }
                     }
+                    fprintf( stdout, "total missing packs: %d\n", count );
                     lPackCounter = 0;
                     receivedPacks.clear();
                 }
@@ -143,6 +146,7 @@ int AceMcastReceiver::receive()
                 fprintf( stdout, "end\n" );
                 fprintf( stdout, "total pack received: %d", lPackCounter );
                 int curPack, nextPack;
+                int count = 0;
                 for ( size_t i = 0; i < receivedPacks.size() ; i++ )
                 {
                     curPack = atoi( receivedPacks[i].c_str() );
@@ -151,10 +155,12 @@ int AceMcastReceiver::receive()
                         nextPack = atoi( receivedPacks[i + 1].c_str() );
                         if ( nextPack != curPack + 1 )
                         {
-                            fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
+                            count += nextPack - curPack - 1;
+                            fprintf( stdout, "packs between %d and %d are missing.\n", curPack, nextPack );
                         }
                     }
                 }
+                fprintf( stdout, "total missing packs: %d\n", count );
                 lPackCounter = 0;
                 receivedPacks.clear();
             }
