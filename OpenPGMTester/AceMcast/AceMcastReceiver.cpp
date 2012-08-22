@@ -145,10 +145,10 @@ int AceMcastReceiver::receive()
                 int curPack, nextPack;
                 for ( size_t i = 0; i < receivedPacks.size() ; i++ )
                 {
-                    curPack = atoi( receivedPack[i].c_str() );
+                    curPack = atoi( receivedPacks[i].c_str() );
                     if ( i + 1 < receivedPacks.size() )
                     {                        
-                        nextPack = atoi( receivedPack[i + 1] );
+                        nextPack = atoi( receivedPacks[i + 1] );
                         if ( nextPack != curPack + 1 )
                         {
                             fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
