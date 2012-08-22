@@ -168,7 +168,7 @@ int AceMcastReceiver::receive()
                 }
                 fprintf( stdout, "last pack: %d, total pack received: %d, total missing packs: %d\n", curPack, lPackCounter, count );
                 double speedKBps = ((double)lTotalReceived / (1024 * 1024)) / elapsedTime * 1000;
-                fprintf( stderr, "received bytes: %d, time: %d, transfer speed: %.2f MBps\n", lTotalReceived, elapsedTime, speedKBps );
+                fprintf( stderr, "received bytes: %d, time: %d ms, transfer speed: %.2f MBps\n", lTotalReceived, elapsedTime, speedKBps );
                 lTotalReceived = 0;
                 lPackCounter = 0;
                 receivedPacks.clear();

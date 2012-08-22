@@ -96,6 +96,7 @@ int AceMcastSender::send()
     bool bSendFile = false;
     vector< string > filenames;
     int sizeInMB = 100;
+    size_t completeSizeToSend = 0;
 
     do 
     {
@@ -200,7 +201,7 @@ int AceMcastSender::send()
         }
         else 
         {
-            size_t completeSizeToSend = sizeInMB * 1024 * 1024;
+            completeSizeToSend = sizeInMB * 1024 * 1024;
             size_t curPos = 0;
             size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
             while ( curPos < completeSizeToSend )
@@ -229,9 +230,9 @@ int AceMcastSender::send()
         Sleep( ACEMCAST_DELAY_BEFORE_END );
         // send a "end" to indicate transfer session end
         error = mMcastSock.send( "end", strlen("end") );
-        fprintf (stderr, "total pack count: %d\n", lPackCounter );
+        fprintf (stderr, "total bytes: %d, pack count: %d\n", completeSizeToSend, lPackCounter );
         double speedKBps = (double) sizeInMB / elapsedTime * 1000;
-        fprintf( stderr, "transfer speed: %.2f MBps\n", speedKBps );
+        fprintf( stderr, "time: %d ms, transfer speed: %.2f MBps\n", elapsedTime, speedKBps );
         fclose( pFileToWrite );
 
     } while ( true );
