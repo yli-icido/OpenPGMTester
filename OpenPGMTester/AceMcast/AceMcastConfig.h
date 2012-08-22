@@ -3,6 +3,7 @@
 
 #include <ace/SOCK_Acceptor.h>
 #include <ace/SOCK_Dgram_Mcast.h>
+#include <ace/High_Res_Timer.h>
 #include <winsock2.h>
 #include <Wsrm.h>
 
@@ -35,5 +36,6 @@
 const int ACEMCAST_MESSAGE_LEN = 1024;
 const std::string ACEMCAST_MULTICAST_GROUP = "234.5.6.7";
 const int ACEMCAST_DATA_DESTINATION_PORT = 5150;
+const int ACEMCAST_DELAY_BEFORE_END = 500;
 
 #endif // ACEMCAST_CONFIG_H_

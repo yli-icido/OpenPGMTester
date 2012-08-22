@@ -103,6 +103,9 @@ int AceMcastReceiver::receive()
     long lPackCounter = 0;
     vector< string > receivedPacks;
     string receivedPack;
+    DWORD timeTick = 0;
+    DWORD elapsedTime = 0;
+    long lTotalReceived = 0;
 
     do 
     {
@@ -132,18 +135,21 @@ int AceMcastReceiver::receive()
                             if ( nextPack != curPack + 1 )
                             {
                                 count += nextPack - curPack - 1;
-                                fprintf( stdout, "packs between %d and %d are missing.", curPack, nextPack );
+                                fprintf( stdout, "packs between %d and %d are missing.\n", curPack, nextPack );
                             }
                         }
                     }
-                    fprintf( stdout, "total pack received: %d", lPackCounter );
+                    fprintf( stdout, "total pack received: %d\n", lPackCounter );
                     fprintf( stdout, "total missing packs: %d\n", count );
                     lPackCounter = 0;
+                    lTotalReceived = 0;
                     receivedPacks.clear();
                 }
+                timeTick = GetTickCount();
             }
             else if (( lBytesRead <= strlen( "end" ) ) && ( strncmp( buff, "end", lBytesRead ) == 0 ))
             {
+                elapsedTime = GetTickCount() - timeTick - ACEMCAST_DELAY_BEFORE_END;
                 fprintf( stdout, "end\n" );
                 int curPack, nextPack;
                 int count = 0;
@@ -160,14 +166,17 @@ int AceMcastReceiver::receive()
                         }
                     }
                 }
-                fprintf( stdout, "total pack received: %d", lPackCounter );
+                fprintf( stdout, "total pack received: %d\n", lPackCounter );
                 fprintf( stdout, "total missing packs: %d\n", count );
+                double speedKBps = ((double)lTotalReceived / (1024 * 1024)) / elapsedTime * 1000;
+                fprintf( stderr, "transfer speed: %.2f MBps\n", speedKBps );
                 lPackCounter = 0;
                 receivedPacks.clear();
             }
             else
             {
                 lPackCounter++;
+                lTotalReceived += lBytesRead;
                 receivedPack = buff;
                 receivedPacks.push_back( receivedPack );
 //                 strncpy( pPack, buff, 10 );

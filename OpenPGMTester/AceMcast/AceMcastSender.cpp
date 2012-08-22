@@ -93,11 +93,14 @@ int AceMcastSender::send()
     int sCounter = 0;
     char cCounter[3];
     char fileToWrite[50];
+    bool bSendFile = false;
+    vector< string > filenames;
+    int sizeInMB = 100;
+
     do 
     {
-        // expect a file name
-        cout << "please input the full file name to send" << endl;
-        cout << "for more than one files, separate the file names with \";\"" << endl;
+        cout << "entrer \"f\" to send a file" << endl;
+        cout << "press enter to send memory block" << endl;
         cout << "   -q to quit" << endl;
         getline( cin, userInput );
         if ( userInput == "-q" )
@@ -105,15 +108,31 @@ int AceMcastSender::send()
             retval = PGM_SUCCESS;
             break;
         }
-        vector< string > filenames;
-        if ( userInput.empty() )
-            filenames.push_back( "TortoiseGit-1.7.12.0-32bit.msi" );
-        else
-            filenames.push_back( userInput );
-        //         string separator(";");
-        //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
-        //         if ( retval != PGM_SUCCESS )
-        //             break;
+        else if ( userInput == "f" )
+        {
+            bSendFile = true;
+            filenames.clear();
+            // expect a file name
+            cout << "please input the full file name to send" << endl;
+            cout << "not sending files? press enter" << endl;
+            getline( cin, userInput );
+            if ( userInput.empty() )
+                filenames.push_back( "TortoiseGit-1.7.12.0-32bit.msi" );
+            else
+                filenames.push_back( userInput );
+            //         string separator(";");
+            //         retval = PGMUtils::intoTokens( userInput, separator, false, filenames );
+            //         if ( retval != PGM_SUCCESS )
+            //             break;
+        }
+        else 
+        {
+            bSendFile = false;
+            // expect a file name
+            cout << "enter a size to send in MB:" << endl;
+            getline( cin, userInput );
+            sizeInMB = atoi( userInput.c_str() );
+        }
 
         FILE* pFileToSend = NULL;
         char* buffer = new char[ ACEMCAST_MESSAGE_LEN ];
@@ -121,7 +140,7 @@ int AceMcastSender::send()
         strcpy( fileToWrite, "acemcast_sent" );
         FILE* pFileToWrite = fopen( strcat( fileToWrite, cCounter ), "w" );
         sCounter++;
-        LONG        error;
+        LONG error;
         long lPackCounter = 0;
 
         // send a "start" indicate a transfer session started
@@ -133,11 +152,10 @@ int AceMcastSender::send()
             break;
         }
 
-        bool bSendFile = false;
-
-        for ( size_t i = 0; i < filenames.size(); i++ )
+        DWORD curTime = GetTickCount();
+        if ( bSendFile )
         {
-            if ( bSendFile )
+            for ( size_t i = 0; i < filenames.size(); i++ )
             {
                 pFileToSend = fopen( filenames[i].c_str(), "rb" );
                 if (pFileToSend == NULL) 
@@ -179,36 +197,41 @@ int AceMcastSender::send()
                 fclose( pFileToSend );
                 pFileToSend = NULL;
             }
-            else 
+        }
+        else 
+        {
+            size_t completeSizeToSend = sizeInMB * 1024 * 1024;
+            size_t curPos = 0;
+            size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
+            while ( curPos < completeSizeToSend )
             {
-                size_t completeSizeToSend = 100 * 1024 * 1024;
-                size_t curPos = 0;
-                size_t sizeToRead = ACEMCAST_MESSAGE_LEN;
-                while ( curPos < completeSizeToSend )
+                if ( completeSizeToSend - curPos < ACEMCAST_MESSAGE_LEN )
                 {
-                    if ( completeSizeToSend - curPos < ACEMCAST_MESSAGE_LEN )
-                    {
-                        sizeToRead = completeSizeToSend - curPos;
-                    }
-                    curPos += sizeToRead;
-                    char cPackCounter[10];
-                    _itoa( lPackCounter, cPackCounter, 10 );
-                    lPackCounter++;
+                    sizeToRead = completeSizeToSend - curPos;
+                }
+                curPos += sizeToRead;
+                char cPackCounter[10];
+                _itoa( lPackCounter, cPackCounter, 10 );
+                lPackCounter++;
 
-                    strcpy( buffer, cPackCounter );
-                    error = mMcastSock.send( buffer, sizeToRead );
-                    if (error == -1)
-                    {
-                        fprintf (stderr, "send() failed: Error = %d\n", error );
-                        retval = PGM_FATAL;
-                        break;
-                    }
+                strcpy( buffer, cPackCounter );
+                error = mMcastSock.send( buffer, sizeToRead );
+                if (error == -1)
+                {
+                    fprintf (stderr, "send() failed: Error = %d\n", error );
+                    retval = PGM_FATAL;
+                    break;
                 }
             }
         }
+        DWORD elapsedTime = GetTickCount() - curTime;
+        // sleep 500 ms to make sure the end will not be lost 
+        Sleep( ACEMCAST_DELAY_BEFORE_END );
         // send a "end" to indicate transfer session end
         error = mMcastSock.send( "end", strlen("end") );
         fprintf (stderr, "total pack count: %d\n", lPackCounter );
+        double speedKBps = (double) sizeInMB / elapsedTime * 1000;
+        fprintf( stderr, "transfer speed: %.2f MBps\n", speedKBps );
         fclose( pFileToWrite );
 
     } while ( true );
