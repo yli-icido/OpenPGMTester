@@ -124,14 +124,29 @@ int AceMcastReceiver::receive()
                 fprintf( stdout, "start\n" );
                 if ( lPackCounter != 0 )
                 {
-                    int curPack, nextPack;
                     int count = 0;
-                    for ( size_t i = 0; i < receivedPacks.size() ; i++ )
+                    int incorrectOrdered = 0;
+                    int curPack = 0;
+                    int nextPack = atoi( receivedPacks[0].c_str() );
+                    vector<int> receivedNum;
+                    receivedNum.push_back( nextPack );
+                    for ( size_t i = 1; i < receivedPacks.size(); i++ )
                     {
-                        curPack = atoi( receivedPacks[i].c_str() );
-                        if ( i + 1 < receivedPacks.size() )
+                        curPack = nextPack;
+                        nextPack = atoi( receivedPacks[i].c_str() );
+                        receivedNum.push_back( nextPack );
+                        if ( curPack > nextPack )
+                            incorrectOrdered++;
+                    }
+
+                    sort(receivedNum.begin(), receivedNum.end());
+
+                    for ( size_t i = 0; i < receivedNum.size() ; i++ )
+                    {
+                        curPack = receivedNum[i];
+                        if ( i + 1 < receivedNum.size() )
                         {                        
-                            nextPack = atoi( receivedPacks[i + 1].c_str() );
+                            nextPack = receivedNum[i + 1];
                             if ( nextPack != curPack + 1 )
                             {
                                 count += nextPack - curPack - 1;
@@ -139,7 +154,7 @@ int AceMcastReceiver::receive()
                             }
                         }
                     }
-                    fprintf( stdout, "last pack: %d, total pack received: %d, total missing packs: %d\n", curPack, lPackCounter, count );
+                    fprintf( stdout, "last pack: %d, total pack received: %d, total missing packs: %d, incorrect order packages: %d\n", curPack, lPackCounter, count, incorrectOrdered );
                     fprintf( stderr, "received bytes: %d\n", lTotalReceived );
                     lPackCounter = 0;
                     lTotalReceived = 0;
@@ -181,7 +196,7 @@ int AceMcastReceiver::receive()
                         }
                     }
                 }
-                fprintf( stdout, "last pack: %d, total pack received: %d, total missing packs: %d\n", curPack, lPackCounter, count );
+                fprintf( stdout, "last pack: %d, total pack received: %d, total missing packs: %d, incorrect order packages: %d\n", curPack, lPackCounter, count, incorrectOrdered );
                 double speedKBps = ((double)lTotalReceived / (1024 * 1024)) / elapsedTime * 1000;
                 fprintf( stderr, "received bytes: %d, time: %d ms, transfer speed: %.2f MBps\n", lTotalReceived, elapsedTime, speedKBps );
                 lTotalReceived = 0;
