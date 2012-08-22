@@ -170,6 +170,7 @@ int AceMcastReceiver::receive()
                 fprintf( stdout, "total missing packs: %d\n", count );
                 double speedKBps = ((double)lTotalReceived / (1024 * 1024)) / elapsedTime * 1000;
                 fprintf( stderr, "transfer speed: %.2f MBps\n", speedKBps );
+                lTotalReceived = 0;
                 lPackCounter = 0;
                 receivedPacks.clear();
             }
