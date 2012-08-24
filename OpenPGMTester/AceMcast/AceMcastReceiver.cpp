@@ -99,7 +99,7 @@ int AceMcastReceiver::receive()
     int rCounter = 0;
     char cCounter[3];
     bool bWriteToFile = false;
-    char pPack[50];
+//     char pPack[50];
     long lPackCounter = 0;
     vector< string > receivedPacks;
     string receivedPack;
