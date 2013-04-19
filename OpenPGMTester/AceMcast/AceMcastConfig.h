@@ -33,7 +33,7 @@
 //==============================================================================
 
 // both
-const int ACEMCAST_MESSAGE_LEN = 1024;
+const int ACEMCAST_MESSAGE_LEN = 1 * 1024;
 const std::string ACEMCAST_MULTICAST_GROUP = "234.5.6.7";
 const int ACEMCAST_DATA_DESTINATION_PORT = 5150;
 const int ACEMCAST_DELAY_BEFORE_END = 500;

@@ -59,7 +59,7 @@ int AceMcastReceiver::init()
             printf("The Winsock 2.2 dll was found okay\n");
 
         mInitDone = true;
-        //         checkProtocols();
+//        checkProtocols();
         retval = PGM_SUCCESS;
 
     } while ( false );

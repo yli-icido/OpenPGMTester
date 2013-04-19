@@ -16,7 +16,7 @@ public:
     virtual int     shutdown();
 
 private:
-//     int     checkProtocols();
+     int     checkProtocols();
 
 private:
     bool    mInitDone;
